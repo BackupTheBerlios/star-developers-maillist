@@ -1,0 +1,171 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Star-developers] [PATCH] man page &amp; -xhelp/-help output sync
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/star-developers/2013-April/index.html" >
+   <LINK REL="made" HREF="mailto:star-developers%40lists.berlios.de?Subject=Re%3A%20%5BStar-developers%5D%20%5BPATCH%5D%20man%20page%20%26%20-xhelp/-help%20output%20sync&In-Reply-To=%3C1365589392-1689-1-git-send-email-praiskup%40redhat.com%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   
+   <LINK REL="Next"  HREF="000028.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Star-developers] [PATCH] man page &amp; -xhelp/-help output sync</H1>
+    <B>Pavel Raiskup</B> 
+    <A HREF="mailto:star-developers%40lists.berlios.de?Subject=Re%3A%20%5BStar-developers%5D%20%5BPATCH%5D%20man%20page%20%26%20-xhelp/-help%20output%20sync&In-Reply-To=%3C1365589392-1689-1-git-send-email-praiskup%40redhat.com%3E"
+       TITLE="[Star-developers] [PATCH] man page &amp; -xhelp/-help output sync">praiskup at redhat.com
+       </A><BR>
+    <I>Wed Apr 10 12:23:12 CEST 2013</I>
+    <P><UL>
+        
+        <LI>Next message: <A HREF="000028.html">[Star-developers] [PATCH] man page &amp; -xhelp/-help output sync
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#27">[ date ]</a>
+              <a href="thread.html#27">[ thread ]</a>
+              <a href="subject.html#27">[ subject ]</a>
+              <a href="author.html#27">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Hi, the manual page scan in Fedora found some inconsistencies in help
+outputs and manual pages content for binaries in 'star' package.  Fix for
+some typos/missing options covers this patch I'll apply for Fedora.  Feel
+free to reuse whatever you want.
+
+Pavel
+---
+ star/pax.c  |  2 ++
+ star/spax.1 | 20 +++++++++++++++++---
+ star/star.1 |  2 +-
+ star/star.c |  2 +-
+ 4 files changed, 21 insertions(+), 5 deletions(-)
+
+diff --git a/star/pax.c b/star/pax.c
+index 8130109..9a2fb18 100644
+--- a/star/pax.c
++++ b/star/pax.c
+@@ -266,9 +266,11 @@ usage(ret)
+ 	error(&quot;\t-c\t\tinvert matching rules\n&quot;);
+ 	error(&quot;\t-d\t\tdo not descend directories\n&quot;);
+ 	error(&quot;\t-f nm\t\tuse 'nm' as tape instead of stdin/stdout\n&quot;);
++	error(&quot;\t-H\t\tsame as -L but follow only symlinks passed on the command line\n&quot;);
+ 	error(&quot;\t-i\t\tdo interactive creation/extraction/renaming\n&quot;);
+ 	error(&quot;\t-k\t\tkeep existing files\n&quot;);
+ 	error(&quot;\t-l\t\tlink files rather than copying them\n&quot;);
++	error(&quot;\t-L\t\tfollow symlinks, archive and dump the files they point to\n&quot;);
+ 	error(&quot;\t-n\t\tone match per pattern only\n&quot;);
+ 	error(&quot;\t-o\t\toptions (none specified with SUSv2 / UNIX-98)\n&quot;);
+ 	error(&quot;\t-p string\tset privileges\n&quot;);
+diff --git a/star/spax.1 b/star/spax.1
+index 5d054c1..7e85638 100644
+--- a/star/spax.1
++++ b/star/spax.1
+@@ -282,6 +282,9 @@ except that the order of presentation of the
+ and
+ .B \-s
+ options is significant.
++
++See also the &quot;OTHER OPTIONS&quot; section.
++
+ .PP
+ The following options shall be supported:
+ .TP
+@@ -3246,7 +3249,7 @@ existing files). As stated, it prevents any overwriting, even if
+ the target file is older than the source. This version adds more
+ granularity of options to solve this problem by introducing the 
+ .BI &quot;\-o invalid=&quot; option
+-\-specifically the UTF-8 action. (Note that an
++\- specifically the UTF-8 action. (Note that an
+ existing file that is named with a UTF-8 encoding is still subject
+ to overwriting in this case. The 
+ .B \-k 
+@@ -4206,10 +4209,16 @@ field.
+ End of quoted text from the POSIX.1-2001 standard.
+ . \&quot; .SH RETURNS
+ . \&quot; .SH ERRORS
+-.SH OPTIONS
++.SH OTHER OPTIONS
+ The following 
+ .I &quot;other options
+-are implemented as extension to the POSIX standard:
++are implemented as extension to the POSIX standard.  Note that some other
++non-POSIX options are mentioned in \fI\-help\fR and \fI-xhelp\fR output
++- these are also supported in
++.BR spax (1)
++and are well described in
++.BR star (1)
++manual page.
+ .TP
+ .B \-help
+ Prints a summary of the most important options for
+@@ -4225,6 +4234,11 @@ and exits.
+ Prints the 
+ .B spax
+ version number string and exists.
++.TP
++.B \-do-statistics
++Print statistic messages at the end of a
++.BR spax (1)
++run.
+ 
+ .SH EXAMPLES
+ .SH ENVIRONMENT
+diff --git a/star/star.1 b/star/star.1
+index b64967d..380fc1c 100644
+--- a/star/star.1
++++ b/star/star.1
+@@ -3025,7 +3025,7 @@ The bug in old
+ versions that cause a reversal of a space and a NULL byte 
+ in the checksum field is not repeated. 
+ If you want to have signed checksums you have to specify the
+-.I \-singed\-checksum
++.I \-signed\-checksum
+ option too. 
+ If you want directories not to be archived in order to be compatible
+ to very old historic tar archives, you need to specify the
+diff --git a/star/star.c b/star/star.c
+index 7b58964..99e72b2 100644
+--- a/star/star.c
++++ b/star/star.c
+@@ -1124,7 +1124,7 @@ xusage(ret)
+ 	error(&quot;\t-no-xheader\tdo not read or write extended headers regardless of format\n&quot;);
+ 	error(&quot;\t-meta\t\tuse inode metadata only (omit file content)\n&quot;);
+ 	error(&quot;\t-xmeta\t\textract meta files\n&quot;);
+-	error(&quot;\t-dupmeta\tuse inode metadata in dump mode if only ctime is newer\n&quot;);
++	error(&quot;\t-dumpmeta\tuse inode metadata in dump mode if only ctime is newer\n&quot;);
+ 	error(&quot;\t-keep-old-files,-k\tkeep existing files\n&quot;);
+ 	error(&quot;\t-refresh-old-files\trefresh existing files, don't create new files\n&quot;);
+ 	error(&quot;\t-refresh\trefresh existing files, don't create new files\n&quot;);
+-- 
+1.8.1.4
+
+</PRE>
+
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	
+	<LI>Next message: <A HREF="000028.html">[Star-developers] [PATCH] man page &amp; -xhelp/-help output sync
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#27">[ date ]</a>
+              <a href="thread.html#27">[ thread ]</a>
+              <a href="subject.html#27">[ subject ]</a>
+              <a href="author.html#27">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/star-developers">More information about the Star-developers
+mailing list</a><br>
+</body></html>

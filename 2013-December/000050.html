@@ -1,0 +1,133 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Star-developers] [Bug-tar] GNU tar generates malformed Pax	attributes
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/star-developers/2013-December/index.html" >
+   <LINK REL="made" HREF="mailto:star-developers%40lists.berlios.de?Subject=Re%3A%20%5BStar-developers%5D%20%5BBug-tar%5D%20GNU%20tar%20generates%20malformed%20Pax%0A%09attributes&In-Reply-To=%3C3682963.e85vvHyBFR%40nb.usersys.redhat.com%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   
+   <LINK REL="Next"  HREF="000051.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Star-developers] [Bug-tar] GNU tar generates malformed Pax	attributes</H1>
+    <B>Pavel Raiskup</B> 
+    <A HREF="mailto:star-developers%40lists.berlios.de?Subject=Re%3A%20%5BStar-developers%5D%20%5BBug-tar%5D%20GNU%20tar%20generates%20malformed%20Pax%0A%09attributes&In-Reply-To=%3C3682963.e85vvHyBFR%40nb.usersys.redhat.com%3E"
+       TITLE="[Star-developers] [Bug-tar] GNU tar generates malformed Pax	attributes">praiskup at redhat.com
+       </A><BR>
+    <I>Mon Dec  9 11:02:55 CET 2013</I>
+    <P><UL>
+        
+        <LI>Next message: <A HREF="000051.html">[Star-developers] [Bug-tar] GNU tar generates malformed Pax	attributes
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#50">[ date ]</a>
+              <a href="thread.html#50">[ thread ]</a>
+              <a href="subject.html#50">[ subject ]</a>
+              <a href="author.html#50">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>On Monday, December 09, 2013 00:02:41 Joerg Schilling wrote:
+&gt;<i> Tim Kientzle &lt;<A HREF="https://lists.berlios.de/mailman/listinfo/star-developers">kientzle at acm.org</A>&gt; wrote:
+</I>&gt;<i>
+</I>&gt;<i> &gt; Pavel recently sent me an archive created with GNU tar
+</I>&gt;<i> &gt; that includes SCHILY.xattr extensions.
+</I>&gt;<i>
+</I>&gt;<i> I would guess that the problem is not SCHILY.xattr extensions in general but
+</I>&gt;<i> a buggy implementation in gtar.
+</I>
+Sadly, I tend to disagree.  The &quot;SCHILY.xattr.attr&quot; does not document encoding
+of binary data.  That means, something like that results in creating binary
+data in pax Extended Header (on Linux):
+
+  $ setfattr -n user.test -v 0x01020304 FILE
+  $ star H=exustar -xattr -c -f test.star FILE
+
+(for that reason CC'ing back star mailing list)
+
+&gt;<i> &gt; 00000340  73 65 72 2e 74 65 73 74  33 3d 61 68 6f 0a 38 35  |ser.test3=aho.85|
+</I>&gt;<i> &gt; 00000350  20 53 43 48 49 4c 59 2e  78 61 74 74 72 2e 73 79  | SCHILY.xattr.sy|
+</I>&gt;<i> &gt; 00000360  73 74 65 6d 2e 70 6f 73  69 78 5f 61 63 6c 5f 61  |stem.posix_acl_a|
+</I>&gt;<i> &gt; 00000370  63 63 65 73 73 3d 02 00  00 00 01 00 06 00 ff ff  |ccess=..........|
+</I>&gt;<i> &gt; 00000380  ff ff 02 00 07 00 0f 00  00 00 04 00 06 00 ff ff  |................|
+</I>&gt;<i> &gt; 00000390  ff ff 10 00 07 00 ff ff  ff ff 20 00 04 00 ff ff  |.......... .....|
+</I>&gt;<i> &gt; 000003a0  ff ff 0a 00 00 00 00 00  00 00 00 00 00 00 00 00  |................|
+</I>&gt;<i> &gt;
+</I>&gt;<i> &gt; In particular, it appears that GNU tar is storing raw binary
+</I>&gt;<i> &gt; here.  It is most definitely NOT valid UTF-8.
+</I>&gt;<i> &gt;
+</I>&gt;<i> &gt; I suppose I?ll have to rework libarchive?s pax parser to
+</I>&gt;<i> &gt; tolerate this.  It would be nice if GNU tar could avoid
+</I>&gt;<i> &gt; such brokenness in the future.
+</I>&gt;<i>
+</I>&gt;<i> This is definitely a bug in gtar and I hope that not many archives exist
+</I>&gt;<i> with this problem.
+</I>
+According to that: At least archives coming from Red Hat distros (and possibly
+all distros having SELinux enabled) seem to produce bad archives (both with
+tar/star).  The problem is that SELinux contexts are stored NULL terminated
+(otherwise completely printable), the 'getxattr()' correctly returns the
+string with trailing '\0' and that is stored then in tar header.
+
+I don't think that it is a big disaster and the conclusion is that we
+should stay backward compatible (which should not cost so much).
+
+&gt;<i> BTW: is this feature in use with gtar? I recently tried to compile gtar on
+</I>&gt;<i> Solaris and it does not seem to support ACLs even though the Changelog claims
+</I>&gt;<i> such support. Given the fact that star includes portable ACL support since
+</I>&gt;<i> 2001 and Linux xattr support since 2003, I would guess that a typical user of
+</I>&gt;<i> these features uses star instead of gtar.
+</I>
+I am not able to test ACLs support on Solaris.  But apart from the numeric ACL
+request [1] star/tar should be compatible in this regard.
+
+&gt;<i> Regarding the problem:
+</I>&gt;<i> It should be obvious that it is an implementation detail that Linux
+</I>&gt;<i> internally stores e.g. ACLs as &quot;system xattrs&quot; and that related data must
+</I>&gt;<i> not appear in an archive. Star of course excludes such data from the
+</I>&gt;<i> archive.
+</I>
+Yes, but e.g. security.selinux is not excluded (yet?).
+
+----
+
+This should be fixed somehow in GNU tar/star.  Maybe before that, we
+should approximate to standardize that pax xattr storage finally to reach
+some non capitalized keyword in pax header (Tim mentioned it some time
+ago).  I mean linux/FreeBSD xattrs only, not the Solaris extended
+attributes as that should be in future standardized separately and should
+be discussed as Joerg said, not ACLs, not SELinux, ...
+
+Thanks,
+Pavel
+
+</PRE>
+
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	
+	<LI>Next message: <A HREF="000051.html">[Star-developers] [Bug-tar] GNU tar generates malformed Pax	attributes
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#50">[ date ]</a>
+              <a href="thread.html#50">[ thread ]</a>
+              <a href="subject.html#50">[ subject ]</a>
+              <a href="author.html#50">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/star-developers">More information about the Star-developers
+mailing list</a><br>
+</body></html>

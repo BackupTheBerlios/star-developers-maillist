@@ -1,0 +1,111 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Star-developers] [PATCH] Segfault due to non-(re)-initialized value
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/star-developers/2012-October/index.html" >
+   <LINK REL="made" HREF="mailto:star-developers%40lists.berlios.de?Subject=Re%3A%20%5BStar-developers%5D%20%5BPATCH%5D%20Segfault%20due%20to%20non-%28re%29-initialized%0A%20value&In-Reply-To=%3C1349871370.14871.1.camel%40dhcp-25-209.brq.redhat.com%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000023.html">
+   
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Star-developers] [PATCH] Segfault due to non-(re)-initialized value</H1>
+    <B>Pavel Raiskup</B> 
+    <A HREF="mailto:star-developers%40lists.berlios.de?Subject=Re%3A%20%5BStar-developers%5D%20%5BPATCH%5D%20Segfault%20due%20to%20non-%28re%29-initialized%0A%20value&In-Reply-To=%3C1349871370.14871.1.camel%40dhcp-25-209.brq.redhat.com%3E"
+       TITLE="[Star-developers] [PATCH] Segfault due to non-(re)-initialized value">praiskup at redhat.com
+       </A><BR>
+    <I>Wed Oct 10 14:16:10 CEST 2012</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000023.html">[Star-developers] [PATCH] Segfault due to non-(re)-initialized value
+</A></li>
+        
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#24">[ date ]</a>
+              <a href="thread.html#24">[ thread ]</a>
+              <a href="subject.html#24">[ subject ]</a>
+              <a href="author.html#24">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>&gt;<i> &gt; This may cause problems e.g. when there is stored file inside tarball that
+</I>&gt;<i> &gt; has some extended attributes inside pax headers and the very next file
+</I>&gt;<i> &gt; does not contain *any* extended attribute.
+</I>&gt;<i> &gt; The 'static_xattr' variable is properly cleared but info-&gt;f_xattr that
+</I>&gt;<i> &gt; points at the &quot;key&quot; time to the same storage is not.  As the target memory
+</I>&gt;<i> &gt; is freed everytime, pointer 'info-&gt;f_xattr' may become invalid.
+</I>&gt;<i>
+</I>&gt;<i> Did you really see a problem here?
+</I>&gt;<i>
+</I>&gt;<i> As valid xattrs are only present when
+</I>&gt;<i>
+</I>&gt;<i> 	(info-&gt;f_xflags &amp; XF_XATTR) != 0
+</I>&gt;<i>
+</I>&gt;<i> there should never be a problem.
+</I>
+Jorg, sorry for disturbance.  We have slightly patched star in Fedora with
+a code check for non-NULL 'info-&gt;f_xattr'.  It seems that author missed
+the 'info-&gt;f_xflags &amp; XF_XATTR' fact.
+
+Thanks for your response!
+
+&gt;<i> &gt; As a site note .. I'm quite lost in star releases (but the truth is that
+</I>&gt;<i> &gt; it may be (and probably is) only my problem :)).  There is a lot of
+</I>&gt;<i> &gt; tarballs here:
+</I>&gt;<i> &gt;
+</I>&gt;<i> &gt;   <A HREF="ftp://ftp.berlios.de/pub/star/alpha/">ftp://ftp.berlios.de/pub/star/alpha/</A>
+</I>&gt;<i> &gt;
+</I>&gt;<i> &gt; But which one is the most recent?  Should I look for the date (about 2010
+</I>&gt;<i> &gt; is the latest touch?  Probably not.)?  Wouldn't it be possible to publish
+</I>&gt;<i> &gt; some VCS system with star?  Or is it published somewhere?  It would be
+</I>&gt;<i> &gt; much easy to get to know whether potential bug is fixed upstream already
+</I>&gt;<i> &gt; or not.
+</I>&gt;<i>
+</I>&gt;<i> The numbering is obvious:
+</I>&gt;<i>
+</I>&gt;<i> 	alpha's appear before their related final release.
+</I>&gt;<i>
+</I>&gt;<i> The latest final is 1.5.1 from december 2009.
+</I>&gt;<i>
+</I>&gt;<i> If there is no later alpha, the final is the current release unless there is a
+</I>&gt;<i> newer version in:
+</I>&gt;<i>
+</I>&gt;<i> 	<A HREF="ftp://ftp.berlios.de/pub/schily/">ftp://ftp.berlios.de/pub/schily/</A>
+</I>&gt;<i>
+</I>&gt;<i> which holds snapshots of all my software. There are plenty of changes in the
+</I>&gt;<i> star version from the schily consolidation since 2009.
+</I>
+ok, thanks for confirmation.  Don't you plan to use some VCS system in
+future?
+
+Pavel
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000023.html">[Star-developers] [PATCH] Segfault due to non-(re)-initialized value
+</A></li>
+	
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#24">[ date ]</a>
+              <a href="thread.html#24">[ thread ]</a>
+              <a href="subject.html#24">[ subject ]</a>
+              <a href="author.html#24">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/star-developers">More information about the Star-developers
+mailing list</a><br>
+</body></html>

@@ -1,0 +1,107 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Star-developers] Star exec()'ed from suid binary
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/star-developers/2013-July/index.html" >
+   <LINK REL="made" HREF="mailto:star-developers%40lists.berlios.de?Subject=Re%3A%20%5BStar-developers%5D%20Star%20exec%28%29%27ed%20from%20suid%20binary&In-Reply-To=%3C7678650.geeWhf319L%40praiskup.usersys.redhat.com%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   
+   <LINK REL="Next"  HREF="000033.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Star-developers] Star exec()'ed from suid binary</H1>
+    <B>Pavel Raiskup</B> 
+    <A HREF="mailto:star-developers%40lists.berlios.de?Subject=Re%3A%20%5BStar-developers%5D%20Star%20exec%28%29%27ed%20from%20suid%20binary&In-Reply-To=%3C7678650.geeWhf319L%40praiskup.usersys.redhat.com%3E"
+       TITLE="[Star-developers] Star exec()'ed from suid binary">praiskup at redhat.com
+       </A><BR>
+    <I>Fri Jul 19 11:10:55 CEST 2013</I>
+    <P><UL>
+        
+        <LI>Next message: <A HREF="000033.html">[Star-developers] Star exec()'ed from suid binary
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#30">[ date ]</a>
+              <a href="thread.html#30">[ thread ]</a>
+              <a href="subject.html#30">[ subject ]</a>
+              <a href="author.html#30">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Hello, I would like to ask you whether you can discuss (and possibly fix)
+the issue with running star as exec()'ed from root setuid binary.
+
+The problem is that the ownership is not restored correctly in that case.
+Under regular user (and using root-suid binary):
+
+  $ ls -l | grep -e archive.tar -e wrapper_root
+  -rw-r--r--. 1 praiskup    praiskup        10240 Jul 18 13:53 archive.tar
+  -rwsr-sr-x. 1 root        root            46176 Jul 18 13:52 wrapper_root
+  $ star -t -v -f archive.tar
+        8 -rw-r--r--  suid_tester/suid_tester Jul 18 13:52 2013 testfile
+  $ ./wrapper_root star -xf archive.tar
+  $ ls -l | grep testfile
+  -rw-r--r--.  1 praiskup root        8 Jul 18 13:52 testfile
+  #              ^^^^^^^^ ^^^^ both are set badly
+
+I see that this is just because we are setting the effective uid to real
+uid (I am missing the reason here, probably because the opentape() call?)
+in main (), here (+- line 360):
+
+ |          if (geteuid() != getuid()) {    /* AIX does not like to do this */
+ |                                          /* If we are not root&gt;--        */
+ |  #ifdef  HAVE_SETREUID
+ |                  if (setreuid(-1, getuid()) &lt; 0)
+ |  #else
+ |  #ifdef  HAVE_SETEUID
+ |                  if (seteuid(getuid()) &lt; 0)
+ |  #else
+ |                  if (setuid(getuid()) &lt; 0)
+ |  #endif
+ |  #endif
+ |                          comerr(&quot;Panic cannot set back effective uid.\n&quot;);
+ |          }
+ |          my_uid = geteuid();
+
+            ^^^^ This seems to block the GID/UID restoration
+
+Anyways, I see that the my_uid is set twice without any use:
+
+ | 350    my_uid = geteuid();
+ | 351    my_uid = getuid();
+
+.. so probably some re-use of my_uid for restoring should be done?  Would
+you please look at it?  I know that this could be considered as a minor
+issue but it seems to break LSB checkers.
+
+Pavel
+
+</PRE>
+
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	
+	<LI>Next message: <A HREF="000033.html">[Star-developers] Star exec()'ed from suid binary
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#30">[ date ]</a>
+              <a href="thread.html#30">[ thread ]</a>
+              <a href="subject.html#30">[ subject ]</a>
+              <a href="author.html#30">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/star-developers">More information about the Star-developers
+mailing list</a><br>
+</body></html>

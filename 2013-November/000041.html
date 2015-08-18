@@ -1,0 +1,127 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Star-developers] NFSv4 ACL support in star
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/star-developers/2013-November/index.html" >
+   <LINK REL="made" HREF="mailto:star-developers%40lists.berlios.de?Subject=Re%3A%20%5BStar-developers%5D%20NFSv4%20ACL%20support%20in%20star&In-Reply-To=%3C5278fa92.hHrZwSJqi2nC7MFT%25Joerg.Schilling%40fokus.fraunhofer.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   
+   <LINK REL="Next"  HREF="000042.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Star-developers] NFSv4 ACL support in star</H1>
+    <B>Joerg Schilling</B> 
+    <A HREF="mailto:star-developers%40lists.berlios.de?Subject=Re%3A%20%5BStar-developers%5D%20NFSv4%20ACL%20support%20in%20star&In-Reply-To=%3C5278fa92.hHrZwSJqi2nC7MFT%25Joerg.Schilling%40fokus.fraunhofer.de%3E"
+       TITLE="[Star-developers] NFSv4 ACL support in star">Joerg.Schilling at fokus.fraunhofer.de
+       </A><BR>
+    <I>Tue Nov  5 15:02:58 CET 2013</I>
+    <P><UL>
+        
+        <LI>Next message: <A HREF="000042.html">[Star-developers] NFSv4 ACL support in star
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#41">[ date ]</a>
+              <a href="thread.html#41">[ thread ]</a>
+              <a href="subject.html#41">[ subject ]</a>
+              <a href="author.html#41">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Hi all,
+
+I am currently finishing support for NFSv4 ACLs in star.
+
+In the first step, I am doing this for Solaris only, as I suspect problems on 
+FreeBSD and Linux, e.g. from a missing libsec.
+
+The NFSv4 ACLs will be encoded via:
+
+SCHILY.acl.ace=text
+
+where &quot;text&quot; is the result of calling
+
+	acl_ftomtext(aclp, ACL_COMPACT_FMT | ACL_APPEND_ID | ACL_SID_FMT);
+
+from libsec. Only non-trivial ACLs are archived.
+
+SCHILY.acl.ace is not allowed to appear if either SCHILY.acl.access or
+SCHILY.acl.default is present and vice versa.
+
+BTW: I expect a local ACL implementation (as Solaris does) to be able to
+auto-convert POSIX draft ACLs into NFSv4 ACLs and it would be nice if we
+did find a way to do the converse soon.
+
+This allows star to e.g. use this function:
+
+base_acl(mode) 
+        mode_t  mode; 
+{ 
+        static char _acltxt[] = &quot;user::***,group::***,other::***&quot;; 
+ 
+        _acltxt[ 6] = (mode &amp; 0400) ? 'r' : '-'; 
+        _acltxt[ 7] = (mode &amp; 0200) ? 'w' : '-'; 
+        _acltxt[ 8] = (mode &amp; 0100) ? 'x' : '-'; 
+        _acltxt[17] = (mode &amp; 0040) ? 'r' : '-'; 
+        _acltxt[18] = (mode &amp; 0020) ? 'w' : '-'; 
+        _acltxt[19] = (mode &amp; 0010) ? 'x' : '-'; 
+        _acltxt[28] = (mode &amp; 0004) ? 'r' : '-'; 
+        _acltxt[29] = (mode &amp; 0002) ? 'w' : '-'; 
+        _acltxt[30] = (mode &amp; 0001) ? 'x' : '-'; 
+ 
+        return (_acltxt); 
+} 
+
+to create POSIX base permissions to clear ACLs for a file, regardless of the 
+ACL implementation in use for the extracted target file.
+
+I selected ACL_COMPACT_FMT as it tends to create slightly shorter strings.
+
+Are there any objections or forseeable problems for the future?
+
+As with POSIX draft ACLs, star checks the acl text while extracting before 
+using it to set ACLs in order to replace use/group names by numeric values in 
+case a user/group name is not defined on the local system. This replacement is 
+also done in case star was called with &quot;-numeric&quot;.
+
+
+I am interested in feedback from FreeBSD and Linux people on whether there is a 
+usable library interface that combines the withdrawn POSIX draft ACLs and the 
+NFSv4 ACLs similar to what libsec does.
+
+J&#246;rg
+
+-- 
+ EMail:<A HREF="https://lists.berlios.de/mailman/listinfo/star-developers">joerg at schily.isdn.cs.tu-berlin.de</A> (home) J&#246;rg Schilling D-13353 Berlin
+       <A HREF="https://lists.berlios.de/mailman/listinfo/star-developers">js at cs.tu-berlin.de</A>                (uni)  
+       <A HREF="https://lists.berlios.de/mailman/listinfo/star-developers">joerg.schilling at fokus.fraunhofer.de</A> (work) Blog: <A HREF="http://schily.blogspot.com/">http://schily.blogspot.com/</A>
+ URL:  <A HREF="http://cdrecord.berlios.de/private/">http://cdrecord.berlios.de/private/</A> <A HREF="ftp://ftp.berlios.de/pub/schily">ftp://ftp.berlios.de/pub/schily</A>
+</PRE>
+
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	
+	<LI>Next message: <A HREF="000042.html">[Star-developers] NFSv4 ACL support in star
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#41">[ date ]</a>
+              <a href="thread.html#41">[ thread ]</a>
+              <a href="subject.html#41">[ subject ]</a>
+              <a href="author.html#41">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/star-developers">More information about the Star-developers
+mailing list</a><br>
+</body></html>

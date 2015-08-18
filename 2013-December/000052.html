@@ -1,0 +1,187 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Star-developers] [Bug-tar] GNU tar generates malformed Pax	attributes
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/star-developers/2013-December/index.html" >
+   <LINK REL="made" HREF="mailto:star-developers%40lists.berlios.de?Subject=Re%3A%20%5BStar-developers%5D%20%5BBug-tar%5D%20GNU%20tar%20generates%20malformed%20Pax%0A%09attributes&In-Reply-To=%3C1695995.x191lBvRqF%40nb.usersys.redhat.com%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000051.html">
+   
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Star-developers] [Bug-tar] GNU tar generates malformed Pax	attributes</H1>
+    <B>Pavel Raiskup</B> 
+    <A HREF="mailto:star-developers%40lists.berlios.de?Subject=Re%3A%20%5BStar-developers%5D%20%5BBug-tar%5D%20GNU%20tar%20generates%20malformed%20Pax%0A%09attributes&In-Reply-To=%3C1695995.x191lBvRqF%40nb.usersys.redhat.com%3E"
+       TITLE="[Star-developers] [Bug-tar] GNU tar generates malformed Pax	attributes">praiskup at redhat.com
+       </A><BR>
+    <I>Mon Dec  9 14:42:16 CET 2013</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000051.html">[Star-developers] [Bug-tar] GNU tar generates malformed Pax	attributes
+</A></li>
+        
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#52">[ date ]</a>
+              <a href="thread.html#52">[ thread ]</a>
+              <a href="subject.html#52">[ subject ]</a>
+              <a href="author.html#52">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Hi J&#246;rg,
+
+&gt;<i> On Monday, December 09, 2013 12:46:48 Joerg Schilling wrote:
+</I>&gt;<i> Pavel Raiskup &lt;<A HREF="https://lists.berlios.de/mailman/listinfo/star-developers">praiskup at redhat.com</A>&gt; wrote:
+</I>&gt;<i>
+</I>&gt;<i> [...]
+</I>&gt;<i> &gt;   $ setfattr -n user.test -v 0x01020304 FILE
+</I>&gt;<i> &gt;   $ star H=exustar -xattr -c -f test.star FILE
+</I>&gt;<i>
+</I>&gt;<i> Well, this may be a problem that is a result from implementing a withdrawn
+</I>&gt;<i> draft on Linux.
+</I>
+This is problem in general: This is the fact  that user wants to have
+extended attribute 'key=value' assigned to a FILE (which is ok) and the
+value contains non-utf8 characters.  This is not about POSIX draft at
+all..  at least afaik.  Or what I am missing here?
+
+&gt;<i> [...]
+</I>&gt;<i>
+</I>&gt;<i> I don't see a problem with the nul character as it is a valid part of a string.
+</I>&gt;<i> If other binary codes appear in an extended tar header (e.g. those that are
+</I>&gt;<i> used for UTF-8 encoding), this may be a real problem.
+</I>
+There is actually problem (and bsdtar is expectedly choking):
+
+  The Open Group Base Specifications Issue 6 [1]:
+  | An extended header shall consist of one or more records, each
+  | constructed as follows:
+  |
+  | &quot;%d %s=%s\n&quot;, &lt;length&gt;, &lt;keyword&gt;, &lt;value&gt;
+  |
+  | The extended header records shall be encoded according to the ISO/IEC
+  | 10646-1:2000 standard (UTF-8).
+
+.. and UTF-8 string may not contain nul character.
+
+&gt;<i> &gt; I don't think that it is a big disaster and the conclusion is that we
+</I>&gt;<i> &gt; should stay backward compatible (which should not cost so much).
+</I>&gt;<i>
+</I>&gt;<i> Well, the main problem seems to be that gtar does not follow the method used in
+</I>&gt;<i> star and archives implementation specific binary data even though there is a
+</I>&gt;<i> portable clean way to archive data for the withdrawn ACL draft.
+</I>
+The main problem is that there is no standardized way how to store binary
+extended file attributes in pax Extended Header.
+
+&gt;<i> With respect to SCHILY.xattr.system.posix_acl_access=.......... gtar is not
+</I>&gt;<i> compatible as this is a tag that always needs to be excluded.
+</I>&gt;<i>
+</I>&gt;<i> &gt; &gt; BTW: is this feature in use with gtar? I recently tried to compile gtar on
+</I>&gt;<i> &gt; &gt; Solaris and it does not seem to support ACLs even though the Changelog claims
+</I>&gt;<i> &gt; &gt; such support. Given the fact that star includes portable ACL support since
+</I>&gt;<i> &gt; &gt; 2001 and Linux xattr support since 2003, I would guess that a typical user of
+</I>&gt;<i> &gt; &gt; these features uses star instead of gtar.
+</I>&gt;<i> &gt;
+</I>&gt;<i> &gt; I am not able to test ACLs support on Solaris.  But apart from the numeric ACL
+</I>&gt;<i> &gt; request [1] star/tar should be compatible in this regard.
+</I>&gt;<i>
+</I>&gt;<i> So you are running a system that does not allow to use VirtualBox?
+</I>&gt;<i>
+</I>&gt;<i> What do you understand by &quot;numeric ACL request&quot;?
+</I>&gt;<i>
+</I>&gt;<i> Just a note: tar is not compatible to star with regards to ACLs as Sun decided
+</I>&gt;<i> to use an implementation method that does not include numeric user IDs. The
+</I>
+I mean this (but completely off-topic regarding extended attributes)
+thread:
+<A HREF="http://article.gmane.org/gmane.comp.gnu.tar.bugs/5119/match=acl+numer">http://article.gmane.org/gmane.comp.gnu.tar.bugs/5119/match=acl+numer</A>
+
+&gt;<i> ...
+</I>&gt;<i> &gt; &gt; Regarding the problem:
+</I>&gt;<i> &gt; &gt; It should be obvious that it is an implementation detail that Linux
+</I>&gt;<i> &gt; &gt; internally stores e.g. ACLs as &quot;system xattrs&quot; and that related data must
+</I>&gt;<i> &gt; &gt; not appear in an archive. Star of course excludes such data from the
+</I>&gt;<i> &gt; &gt; archive.
+</I>&gt;<i> &gt;
+</I>&gt;<i> &gt; Yes, but e.g. security.selinux is not excluded (yet?).
+</I>&gt;<i>
+</I>&gt;<i> If security.selinux was in use in 2003, I am sure that I discussed the problem
+</I>&gt;<i> with Andreas Gr&#252;nbacher and we decided (based on his explanations) that this
+</I>&gt;<i> could be archived in raw mode.
+</I>&gt;<i>
+</I>&gt;<i> If this is something new, we need to discuss it as I of course cannot
+</I>&gt;<i> help if people implement features that might be in conflict with
+</I>&gt;<i> existing star archive format.
+</I>&gt;<i>
+</I>&gt;<i> Could you explain the problem?
+</I>
+I don't know whether this is new or not.  But you have the '\0' in raw
+SELinux context now, e.g..  That is not a bug (even when I see that
+trailing nul as redundant) in SELinux because you should not care about
+exact content of that extended attribute (it is hidden behind the
+'libselinux.so' wrappers, at least these days?).
+
+The problem is: At least libarchive (bsdtar) does not expect the '\0' byte
+in extended header.
+
+&gt;<i> &gt; ----
+</I>&gt;<i> &gt;
+</I>&gt;<i> &gt; This should be fixed somehow in GNU tar/star.  Maybe before that, we
+</I>&gt;<i> &gt; should approximate to standardize that pax xattr storage finally to reach
+</I>&gt;<i> &gt; some non capitalized keyword in pax header (Tim mentioned it some time
+</I>&gt;<i> &gt; ago).  I mean linux/FreeBSD xattrs only, not the Solaris extended
+</I>&gt;<i> &gt; attributes as that should be in future standardized separately and should
+</I>&gt;<i> &gt; be discussed as Joerg said, not ACLs, not SELinux, ...
+</I>&gt;<i>
+</I>&gt;<i> If there are more than a few archives that include binary acl information
+</I>&gt;<i> inside linux xattrs, we may be forced to implement code to ignore these
+</I>&gt;<i> specific xattrs when in extract mode.
+</I>
+IMO, such attributes are worth ignoring.  At least GNU tar ignores all non
+'user.*' extended attributes during extract.  Other that 'user.*'
+attributes are usually system dependant and to extract them the user (a)
+should be root /* linux at least */ and (b) should be sure about the
+binary compatibility.
+
+GNU tar atm stores now ACLs in 'SCHILY.acl.access' in text form (when
+--acls is on) and in binary form (when --xattrs is on).
+
+Yes; I think that this could be tweaked to not store ACLs in raw mode
+(SCHILY.xattr.system.posix_acl_access) at least if --acls is on;  but when
+users specify --xattrs during archiving, usually they expect that even ACLs
+are backed up (they don't care; ACLs == xattrs..).  Not backing up the binary
+ACLs may unexpectedly surprise user..
+
+[1] <A HREF="http://pubs.opengroup.org/onlinepubs/009695299/utilities/pax.html">http://pubs.opengroup.org/onlinepubs/009695299/utilities/pax.html</A>
+
+Pavel
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000051.html">[Star-developers] [Bug-tar] GNU tar generates malformed Pax	attributes
+</A></li>
+	
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#52">[ date ]</a>
+              <a href="thread.html#52">[ thread ]</a>
+              <a href="subject.html#52">[ subject ]</a>
+              <a href="author.html#52">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/star-developers">More information about the Star-developers
+mailing list</a><br>
+</body></html>

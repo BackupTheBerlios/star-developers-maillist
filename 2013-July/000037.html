@@ -1,0 +1,88 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Star-developers] Star exec()'ed from suid binary
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/star-developers/2013-July/index.html" >
+   <LINK REL="made" HREF="mailto:star-developers%40lists.berlios.de?Subject=Re%3A%20%5BStar-developers%5D%20Star%20exec%28%29%27ed%20from%20suid%20binary&In-Reply-To=%3C51ee5384.0nLlFzUkvsGjZxUb%25Joerg.Schilling%40fokus.fraunhofer.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000036.html">
+   <LINK REL="Next"  HREF="000038.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Star-developers] Star exec()'ed from suid binary</H1>
+    <B>Joerg Schilling</B> 
+    <A HREF="mailto:star-developers%40lists.berlios.de?Subject=Re%3A%20%5BStar-developers%5D%20Star%20exec%28%29%27ed%20from%20suid%20binary&In-Reply-To=%3C51ee5384.0nLlFzUkvsGjZxUb%25Joerg.Schilling%40fokus.fraunhofer.de%3E"
+       TITLE="[Star-developers] Star exec()'ed from suid binary">Joerg.Schilling at fokus.fraunhofer.de
+       </A><BR>
+    <I>Tue Jul 23 11:57:24 CEST 2013</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000036.html">[Star-developers] Star exec()'ed from suid binary
+</A></li>
+        <LI>Next message: <A HREF="000038.html">[Star-developers] Star exec()'ed from suid binary
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#37">[ date ]</a>
+              <a href="thread.html#37">[ thread ]</a>
+              <a href="subject.html#37">[ subject ]</a>
+              <a href="author.html#37">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Pavel Raiskup &lt;<A HREF="https://lists.berlios.de/mailman/listinfo/star-developers">praiskup at redhat.com</A>&gt; wrote:
+
+&gt;<i> JFYI, there was filled bug [1] against The Linux Foundation bugzilla
+</I>&gt;<i> asking whether the issues noted by their LSB testsuite are issues or not.
+</I>&gt;<i> Possibly, you may be interested in discussion there.
+</I>&gt;<i>
+</I>&gt;<i> [1] <A HREF="https://lsbbugs.linuxfoundation.org/show_bug.cgi?id=3824">https://lsbbugs.linuxfoundation.org/show_bug.cgi?id=3824</A>)
+</I>
+Hi,
+
+now that I understand where your problems come from, could you explain what 
+excatly the failing script does?
+
+Maybe this script is just under a wrong assumption?
+
+It seems that it is impossible to find out whether a process itself was suid 
+root or whether it has been called by a suid root process that did not manage 
+IDs before the fork()/exec().
+
+
+J&#246;rg
+
+-- 
+ EMail:<A HREF="https://lists.berlios.de/mailman/listinfo/star-developers">joerg at schily.isdn.cs.tu-berlin.de</A> (home) J&#246;rg Schilling D-13353 Berlin
+       <A HREF="https://lists.berlios.de/mailman/listinfo/star-developers">js at cs.tu-berlin.de</A>                (uni)  
+       <A HREF="https://lists.berlios.de/mailman/listinfo/star-developers">joerg.schilling at fokus.fraunhofer.de</A> (work) Blog: <A HREF="http://schily.blogspot.com/">http://schily.blogspot.com/</A>
+ URL:  <A HREF="http://cdrecord.berlios.de/private/">http://cdrecord.berlios.de/private/</A> <A HREF="ftp://ftp.berlios.de/pub/schily">ftp://ftp.berlios.de/pub/schily</A>
+</PRE>
+
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000036.html">[Star-developers] Star exec()'ed from suid binary
+</A></li>
+	<LI>Next message: <A HREF="000038.html">[Star-developers] Star exec()'ed from suid binary
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#37">[ date ]</a>
+              <a href="thread.html#37">[ thread ]</a>
+              <a href="subject.html#37">[ subject ]</a>
+              <a href="author.html#37">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/star-developers">More information about the Star-developers
+mailing list</a><br>
+</body></html>

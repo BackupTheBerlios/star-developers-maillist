@@ -1,0 +1,86 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Star-developers] Should pax restore UID/GID by default?
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/star-developers/2013-July/index.html" >
+   <LINK REL="made" HREF="mailto:star-developers%40lists.berlios.de?Subject=Re%3A%20%5BStar-developers%5D%20Should%20pax%20restore%20UID/GID%20by%20default%3F&In-Reply-To=%3C1396582.vcs7zWvjIi%40praiskup.usersys.redhat.com%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000031.html">
+   <LINK REL="Next"  HREF="000034.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Star-developers] Should pax restore UID/GID by default?</H1>
+    <B>Pavel Raiskup</B> 
+    <A HREF="mailto:star-developers%40lists.berlios.de?Subject=Re%3A%20%5BStar-developers%5D%20Should%20pax%20restore%20UID/GID%20by%20default%3F&In-Reply-To=%3C1396582.vcs7zWvjIi%40praiskup.usersys.redhat.com%3E"
+       TITLE="[Star-developers] Should pax restore UID/GID by default?">praiskup at redhat.com
+       </A><BR>
+    <I>Fri Jul 19 15:05:49 CEST 2013</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000031.html">[Star-developers] Should pax restore UID/GID by default?
+</A></li>
+        <LI>Next message: <A HREF="000034.html">[Star-developers] Should pax restore UID/GID by default?
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#32">[ date ]</a>
+              <a href="thread.html#32">[ thread ]</a>
+              <a href="subject.html#32">[ subject ]</a>
+              <a href="author.html#32">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>&gt;<i> It seems that the closed source pax on Solaris (from the OpenGroup) by
+</I>&gt;<i> default does not set file ownership, so I will change this.
+</I>
+Could you please post a patch for this?  To allow me to do compatible
+backport?
+
+----
+
+And another one - actual pax frontend is also removing leading slash
+during archive extraction (inherited behaviour from tar).  I'm not sure if
+this is expected and really wanted.  According to '-s' option
+specification [1], you are always able to remove leading slash.  What do
+you think about 'abs_path = TRUE' for pax frontend?  The &quot;OpenBSD&quot; pax
+implementation does not strip slashes, what does the Solaris
+implementation (I'm unable to test it)?
+
+Pavel
+
+</PRE>
+
+
+
+
+
+
+
+
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000031.html">[Star-developers] Should pax restore UID/GID by default?
+</A></li>
+	<LI>Next message: <A HREF="000034.html">[Star-developers] Should pax restore UID/GID by default?
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#32">[ date ]</a>
+              <a href="thread.html#32">[ thread ]</a>
+              <a href="subject.html#32">[ subject ]</a>
+              <a href="author.html#32">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/star-developers">More information about the Star-developers
+mailing list</a><br>
+</body></html>

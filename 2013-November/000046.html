@@ -1,0 +1,91 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Star-developers] NFSv4 ACL support in star
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/star-developers/2013-November/index.html" >
+   <LINK REL="made" HREF="mailto:star-developers%40lists.berlios.de?Subject=Re%3A%20%5BStar-developers%5D%20NFSv4%20ACL%20support%20in%20star&In-Reply-To=%3C527ba4ec.e9TOPksWy6wOFrCx%25Joerg.Schilling%40fokus.fraunhofer.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000045.html">
+   <LINK REL="Next"  HREF="000047.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Star-developers] NFSv4 ACL support in star</H1>
+    <B>Joerg Schilling</B> 
+    <A HREF="mailto:star-developers%40lists.berlios.de?Subject=Re%3A%20%5BStar-developers%5D%20NFSv4%20ACL%20support%20in%20star&In-Reply-To=%3C527ba4ec.e9TOPksWy6wOFrCx%25Joerg.Schilling%40fokus.fraunhofer.de%3E"
+       TITLE="[Star-developers] NFSv4 ACL support in star">Joerg.Schilling at fokus.fraunhofer.de
+       </A><BR>
+    <I>Thu Nov  7 15:34:20 CET 2013</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000045.html">[Star-developers] NFSv4 ACL support in star
+</A></li>
+        <LI>Next message: <A HREF="000047.html">[Star-developers] NFSv4 ACL support in star
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#46">[ date ]</a>
+              <a href="thread.html#46">[ thread ]</a>
+              <a href="subject.html#46">[ subject ]</a>
+              <a href="author.html#46">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Tim Kientzle &lt;<A HREF="https://lists.berlios.de/mailman/listinfo/star-developers">kientzle at acm.org</A>&gt; wrote:
+
+&gt;<i> &gt;&gt; Use the usual pathconf(3), with _PC_ACL_NFS4.
+</I>&gt;<i> &gt; 
+</I>&gt;<i> &gt; This looks like an interface that is not optimized for performance.
+</I>&gt;<i>
+</I>&gt;<i> If you call it only once per filesystem, the performance is not an issue.
+</I>&gt;<i> Libarchive caches filesystem properties as it traverses the tree,
+</I>&gt;<i> so it would have no problem with this.
+</I>
+Then you need to call stat() for every file or need to know every mount point, 
+that might be a single file...
+
+&gt;<i> But there are also filesystems (AIX, I think) that permit different
+</I>&gt;<i> types of ACLs on different files in the same file system.
+</I>&gt;<i>
+</I>&gt;<i> I would like to see a bit added to stat() indicating the presence of
+</I>&gt;<i> either POSIX.1e or NFSv4 ACLs so that clients can efficiently
+</I>&gt;<i> determine this on a per-file basis.
+</I>
+SCO UnixWare uses the UFS ACL implementation from SVr4/Solaris but added a
+st_aclcnt field in struct stat. Do you have free space in strct stat on BSD?
+
+J&#246;rg
+
+-- 
+ EMail:<A HREF="https://lists.berlios.de/mailman/listinfo/star-developers">joerg at schily.isdn.cs.tu-berlin.de</A> (home) J&#246;rg Schilling D-13353 Berlin
+       <A HREF="https://lists.berlios.de/mailman/listinfo/star-developers">js at cs.tu-berlin.de</A>                (uni)  
+       <A HREF="https://lists.berlios.de/mailman/listinfo/star-developers">joerg.schilling at fokus.fraunhofer.de</A> (work) Blog: <A HREF="http://schily.blogspot.com/">http://schily.blogspot.com/</A>
+ URL:  <A HREF="http://cdrecord.berlios.de/private/">http://cdrecord.berlios.de/private/</A> <A HREF="ftp://ftp.berlios.de/pub/schily">ftp://ftp.berlios.de/pub/schily</A>
+</PRE>
+
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000045.html">[Star-developers] NFSv4 ACL support in star
+</A></li>
+	<LI>Next message: <A HREF="000047.html">[Star-developers] NFSv4 ACL support in star
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#46">[ date ]</a>
+              <a href="thread.html#46">[ thread ]</a>
+              <a href="subject.html#46">[ subject ]</a>
+              <a href="author.html#46">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/star-developers">More information about the Star-developers
+mailing list</a><br>
+</body></html>

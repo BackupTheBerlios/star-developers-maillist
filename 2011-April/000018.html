@@ -1,0 +1,159 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Star-developers] Patch to add lzip support to star
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/star-developers/2011-April/index.html" >
+   <LINK REL="made" HREF="mailto:star-developers%40lists.berlios.de?Subject=Re%3A%20%5BStar-developers%5D%20Patch%20to%20add%20lzip%20support%20to%20star&In-Reply-To=%3C4da6c4fb.AgEfAk1YUSDKeITx%25Joerg.Schilling%40fokus.fraunhofer.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000017.html">
+   
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Star-developers] Patch to add lzip support to star</H1>
+    <B>Joerg Schilling</B> 
+    <A HREF="mailto:star-developers%40lists.berlios.de?Subject=Re%3A%20%5BStar-developers%5D%20Patch%20to%20add%20lzip%20support%20to%20star&In-Reply-To=%3C4da6c4fb.AgEfAk1YUSDKeITx%25Joerg.Schilling%40fokus.fraunhofer.de%3E"
+       TITLE="[Star-developers] Patch to add lzip support to star">Joerg.Schilling at fokus.fraunhofer.de
+       </A><BR>
+    <I>Thu Apr 14 11:57:15 CEST 2011</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000017.html">[Star-developers] Patch to add lzip support to star
+</A></li>
+        
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#18">[ date ]</a>
+              <a href="thread.html#18">[ thread ]</a>
+              <a href="subject.html#18">[ subject ]</a>
+              <a href="author.html#18">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE><A HREF="https://lists.berlios.de/mailman/listinfo/star-developers">markk at clara.co.uk</A> wrote:
+
+&gt;<i> Joerg Schilling wrote:
+</I>&gt;<i> &gt; Please check the preliminary source I just put out at:
+</I>&gt;<i> &gt; <A HREF="ftp://ftp.berlios.de/pub/schily/">ftp://ftp.berlios.de/pub/schily/</A>
+</I>&gt;<i> &gt; your patch contained a typo.
+</I>&gt;<i>
+</I>&gt;<i> I didn't notice that comparing my patch file with the new star source.
+</I>&gt;<i> Care to enlighten me as to where the typo was? :)
+</I>
+You used a &quot;=&quot; where a &quot;==&quot; was correct.
+
+
+&gt;<i> &gt; Did you make tests with this compression program?
+</I>&gt;<i> &gt;
+</I>&gt;<i> &gt; My impression was that it spends aprox. twice as much CPU time than xz for
+</I>&gt;<i> &gt; the same compression task, OK xz needs twice as much RAM than lzip.
+</I>&gt;<i>
+</I>&gt;<i> Yes, I posted about that to the lzip-bug mailing list a while ago, see
+</I>&gt;<i> <A HREF="http://www.mail-archive.com/lzip-bug@nongnu.org/msg00273.html">http://www.mail-archive.com/lzip-bug@nongnu.org/msg00273.html</A>
+</I>
+I did not run tests based on dictionalry size but I compared the behavior with 
+-9.
+
+&gt;<i> For me, lzip took about 2.5 times longer than xz to compress one test
+</I>&gt;<i> file. And while I can comfortably use xz with a dictionary size of 256MB
+</I>&gt;<i> on my system, lzip aborted with an out-of-memory error when I attempted to
+</I>&gt;<i> use that size. I'm not sure why there is such a large performance
+</I>&gt;<i> difference. Maybe lzip is based on an older version of the LZMA SDK???
+</I>
+I did compare -9 and I before made some tests with optimization. The actual
+CPU requirement may depend on the type of data.
+
+&gt;<i> One apparent advantage of the lzip format compared to xz is for use in
+</I>&gt;<i> embedded systems; the lzip file format is simpler than xz so decompression
+</I>&gt;<i> code can be smaller.
+</I>
+This matches my experiences.
+
+&gt;<i> &gt; The decompression time seems to be comparable and lzip again needs only
+</I>&gt;<i> &gt; half the RAM xz like to have, so this may be an argument.
+</I>&gt;<i>
+</I>&gt;<i> That difference may have been due to different default dictionary sizes
+</I>&gt;<i> used by lzip vs xz. Try comparing the memory usage when both are using the
+</I>&gt;<i> same dictionary size.
+</I>
+For me it is important, how much RAM decompression may need as I am using xz to 
+create compressed OpenSolaris packages that are fetched over the network. In 
+such a case, it is important to be able to decompress with few memory, but with 
+todays machines, a RAM requirement of 100 MB may (as with xz) may be acceptable.
+
+
+&gt;<i> &gt; The licensce of lzip is a problem as it is unclear whether the code
+</I>&gt;<i> &gt; may be used as a built in library for arbitrary projects.
+</I>&gt;<i>
+</I>&gt;<i> The lzlib (and lzip) license is the GNU GPL v3.
+</I>&gt;<i>
+</I>&gt;<i> However, pdlzip can compress and decompress lzip format and is public domain:
+</I>&gt;<i>   <A HREF="http://lzip.nongnu.org/pdlzip.html">http://lzip.nongnu.org/pdlzip.html</A>
+</I>&gt;<i> Also easylzma is public domain:
+</I>&gt;<i>   <A HREF="http://lloyd.github.com/easylzma/">http://lloyd.github.com/easylzma/</A>
+</I>
+Thank you for the hint. 
+
+
+&gt;<i> &gt; The interesting thing seems to be that both xz and lzip claim to be a
+</I>&gt;<i> &gt; descendent frm LZMA. Do you have more information on this?
+</I>&gt;<i>
+</I>&gt;<i> The original LZMA SDK is public domain, so developers can modify it or
+</I>&gt;<i> incorporate code from it into their projects regardless of the license
+</I>&gt;<i> they use for their software.
+</I>&gt;<i>
+</I>&gt;<i> XZ Utils is mostly public domain, while lzip and lzlib are distributed
+</I>&gt;<i> under the GNU GPL version 3. As mentioned above there are public domain
+</I>&gt;<i> libraries which can be used to implement lzip support.
+</I>
+It is in general bad habbit to add restrictions to the license of code while
+modifying it. 
+
+I am asking because I am still thinking about whether star should be converted 
+in order to support compression via dlopen() and libraries.
+
+BTW: please test the next preliminary star in:
+
+<A HREF="ftp://ftp.berlios.de/pub/schily/">ftp://ftp.berlios.de/pub/schily/</A>
+
+I am interested in creating a 1.5.2 release in preparation to allow the next 
+development cycle that would cause bigger code changes as a result from:
+
+-	allowing path names of unlimited size
+
+-	introducing internationalized messages.
+
+J&#246;rg
+
+-- 
+ EMail:<A HREF="https://lists.berlios.de/mailman/listinfo/star-developers">joerg at schily.isdn.cs.tu-berlin.de</A> (home) J&#246;rg Schilling D-13353 Berlin
+       <A HREF="https://lists.berlios.de/mailman/listinfo/star-developers">js at cs.tu-berlin.de</A>                (uni)  
+       <A HREF="https://lists.berlios.de/mailman/listinfo/star-developers">joerg.schilling at fokus.fraunhofer.de</A> (work) Blog: <A HREF="http://schily.blogspot.com/">http://schily.blogspot.com/</A>
+ URL:  <A HREF="http://cdrecord.berlios.de/private/">http://cdrecord.berlios.de/private/</A> <A HREF="ftp://ftp.berlios.de/pub/schily">ftp://ftp.berlios.de/pub/schily</A>
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000017.html">[Star-developers] Patch to add lzip support to star
+</A></li>
+	
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#18">[ date ]</a>
+              <a href="thread.html#18">[ thread ]</a>
+              <a href="subject.html#18">[ subject ]</a>
+              <a href="author.html#18">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/star-developers">More information about the Star-developers
+mailing list</a><br>
+</body></html>

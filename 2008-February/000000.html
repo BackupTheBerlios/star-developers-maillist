@@ -1,0 +1,90 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Star-developers] Sparse regions in very large files
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/star-developers/2008-February/index.html" >
+   <LINK REL="made" HREF="mailto:star-developers%40lists.berlios.de?Subject=Re%3A%20%5BStar-developers%5D%20Sparse%20regions%20in%20very%20large%20files&In-Reply-To=%3C47BD9C03.2020303%40sun.com%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   
+   <LINK REL="Next"  HREF="000001.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Star-developers] Sparse regions in very large files</H1>
+    <B>Eric Diven</B> 
+    <A HREF="mailto:star-developers%40lists.berlios.de?Subject=Re%3A%20%5BStar-developers%5D%20Sparse%20regions%20in%20very%20large%20files&In-Reply-To=%3C47BD9C03.2020303%40sun.com%3E"
+       TITLE="[Star-developers] Sparse regions in very large files">Eric.Diven at Sun.COM
+       </A><BR>
+    <I>Thu Feb 21 16:42:59 CET 2008</I>
+    <P><UL>
+        
+        <LI>Next message: <A HREF="000001.html">[Star-developers] Sparse regions in very large files
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#0">[ date ]</a>
+              <a href="thread.html#0">[ thread ]</a>
+              <a href="subject.html#0">[ subject ]</a>
+              <a href="author.html#0">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>I'm in the planning stages of a project to make some changes to Sun 
+SAM-FS.  Namely, we're looking to move to a newer/more standard tar 
+format for tape archiving.  I've been looking at doing this by moving to 
+either the newest GNU format, or the star format, as both of these are 
+supported by 3rd parties outside of Sun.  The immediate goal of the 
+project is to get the size and name/linkname into the standard PAX 
+headers, later we'll need to support ACLs as well.
+
+Because the star format supports ACLs, and the GNU tar format does not, 
+I'm leaning towards recommending the star format.  However, I wanted to 
+inquire about how star supports sparse files that are larger than 8 GB.  
+The documentation of the star format 
+(<A HREF="http://cdrecord.berlios.de/old/private/man/star/star.4.html">http://cdrecord.berlios.de/old/private/man/star/star.4.html</A>) seems to 
+indicate that star handles sparse regions with the following struct:
+
+struct sparse {
+    char t_offset[12];
+    char t_numbytes[12];
+};
+
+
+This brings up the question of how star handles sparse regions with 
+offsets or lengths greater than 8GB.  I was wondering if the 
+documentation is out of date, or if star is currently unable to sparse 
+regions in very large files.
+
+Thanks,
+
+Eric Diven
+
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	
+	<LI>Next message: <A HREF="000001.html">[Star-developers] Sparse regions in very large files
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#0">[ date ]</a>
+              <a href="thread.html#0">[ thread ]</a>
+              <a href="subject.html#0">[ subject ]</a>
+              <a href="author.html#0">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/star-developers">More information about the Star-developers
+mailing list</a><br>
+</body></html>

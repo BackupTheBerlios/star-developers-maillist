@@ -1,0 +1,129 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Star-developers] [PATCH] Segfault due to non-(re)-initialized value
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/star-developers/2012-October/index.html" >
+   <LINK REL="made" HREF="mailto:star-developers%40lists.berlios.de?Subject=Re%3A%20%5BStar-developers%5D%20%5BPATCH%5D%20Segfault%20due%20to%20non-%28re%29-initialized%0A%20value&In-Reply-To=%3C5075526e.S9D7L3%2BFNnwYQsw/%25Joerg.Schilling%40fokus.fraunhofer.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000022.html">
+   <LINK REL="Next"  HREF="000024.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Star-developers] [PATCH] Segfault due to non-(re)-initialized value</H1>
+    <B>Joerg Schilling</B> 
+    <A HREF="mailto:star-developers%40lists.berlios.de?Subject=Re%3A%20%5BStar-developers%5D%20%5BPATCH%5D%20Segfault%20due%20to%20non-%28re%29-initialized%0A%20value&In-Reply-To=%3C5075526e.S9D7L3%2BFNnwYQsw/%25Joerg.Schilling%40fokus.fraunhofer.de%3E"
+       TITLE="[Star-developers] [PATCH] Segfault due to non-(re)-initialized value">Joerg.Schilling at fokus.fraunhofer.de
+       </A><BR>
+    <I>Wed Oct 10 12:48:14 CEST 2012</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000022.html">[Star-developers] [PATCH] Segfault due to non-(re)-initialized value
+</A></li>
+        <LI>Next message: <A HREF="000024.html">[Star-developers] [PATCH] Segfault due to non-(re)-initialized value
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#23">[ date ]</a>
+              <a href="thread.html#23">[ thread ]</a>
+              <a href="subject.html#23">[ subject ]</a>
+              <a href="author.html#23">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Pavel Raiskup &lt;<A HREF="https://lists.berlios.de/mailman/listinfo/star-developers">praiskup at redhat.com</A>&gt; wrote:
+
+&gt;<i> I have discovered one possible problem in xattr implementation in star:
+</I>&gt;<i>
+</I>&gt;<i>   diff --git a/star/header.c b/star/header.c
+</I>&gt;<i>   index 5f96c67..51bb0c2 100644
+</I>&gt;<i>   --- a/star/header.c
+</I>&gt;<i>   +++ b/star/header.c
+</I>&gt;<i>   @@ -1511,6 +1511,9 @@ static    BOOL    modewarn = FALSE;
+</I>&gt;<i>           info-&gt;f_xftype = XT_BAD;
+</I>&gt;<i>           info-&gt;f_rxftype = XT_BAD;
+</I>&gt;<i>           info-&gt;f_xflags = 0;
+</I>&gt;<i>   +#ifdef USE_XATTR
+</I>&gt;<i>   +       info-&gt;f_xattr = 0;
+</I>&gt;<i>   +#endif
+</I>&gt;<i>           info-&gt;f_contoffset = (off_t)0;
+</I>&gt;<i>           info-&gt;f_flags &amp;= F_HAS_NAME;
+</I>&gt;<i>           info-&gt;f_fflags = 0L;
+</I>&gt;<i>
+</I>&gt;<i> This may cause problems e.g. when there is stored file inside tarball that
+</I>&gt;<i> has some extended attributes inside pax headers and the very next file
+</I>&gt;<i> does not contain *any* extended attribute.
+</I>&gt;<i> The 'static_xattr' variable is properly cleared but info-&gt;f_xattr that
+</I>&gt;<i> points at the &quot;key&quot; time to the same storage is not.  As the target memory
+</I>&gt;<i> is freed everytime, pointer 'info-&gt;f_xattr' may become invalid.
+</I>
+Did you really see a problem here?
+
+As valid xattrs are only present when 
+
+	(info-&gt;f_xflags &amp; XF_XATTR) != 0
+
+there should never be a problem.
+
+&gt;<i> As a site note .. I'm quite lost in star releases (but the truth is that
+</I>&gt;<i> it may be (and probably is) only my problem :)).  There is a lot of
+</I>&gt;<i> tarballs here:
+</I>&gt;<i>
+</I>&gt;<i>   <A HREF="ftp://ftp.berlios.de/pub/star/alpha/">ftp://ftp.berlios.de/pub/star/alpha/</A>
+</I>&gt;<i>
+</I>&gt;<i> But which one is the most recent?  Should I look for the date (about 2010
+</I>&gt;<i> is the latest touch?  Probably not.)?  Wouldn't it be possible to publish
+</I>&gt;<i> some VCS system with star?  Or is it published somewhere?  It would be
+</I>&gt;<i> much easy to get to know whether potential bug is fixed upstream already
+</I>&gt;<i> or not.
+</I>
+The numbering is obvious: 
+
+	alpha's appear before their related final release.
+
+The latest final is 1.5.1 from december 2009.
+
+If there is no later alpha, the final is the current release unless there is a 
+newer version in:
+
+	<A HREF="ftp://ftp.berlios.de/pub/schily/">ftp://ftp.berlios.de/pub/schily/</A>
+
+which holds snapshots of all my software. There are plenty of changes in the 
+star version from the schily consolidation since 2009.
+
+
+J&#246;rg
+
+-- 
+ EMail:<A HREF="https://lists.berlios.de/mailman/listinfo/star-developers">joerg at schily.isdn.cs.tu-berlin.de</A> (home) J&#246;rg Schilling D-13353 Berlin
+       <A HREF="https://lists.berlios.de/mailman/listinfo/star-developers">js at cs.tu-berlin.de</A>                (uni)  
+       <A HREF="https://lists.berlios.de/mailman/listinfo/star-developers">joerg.schilling at fokus.fraunhofer.de</A> (work) Blog: <A HREF="http://schily.blogspot.com/">http://schily.blogspot.com/</A>
+ URL:  <A HREF="http://cdrecord.berlios.de/private/">http://cdrecord.berlios.de/private/</A> <A HREF="ftp://ftp.berlios.de/pub/schily">ftp://ftp.berlios.de/pub/schily</A>
+</PRE>
+
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000022.html">[Star-developers] [PATCH] Segfault due to non-(re)-initialized value
+</A></li>
+	<LI>Next message: <A HREF="000024.html">[Star-developers] [PATCH] Segfault due to non-(re)-initialized value
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#23">[ date ]</a>
+              <a href="thread.html#23">[ thread ]</a>
+              <a href="subject.html#23">[ subject ]</a>
+              <a href="author.html#23">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/star-developers">More information about the Star-developers
+mailing list</a><br>
+</body></html>

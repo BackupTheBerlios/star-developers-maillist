@@ -1,0 +1,118 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Star-developers] star -force-hole -sparse issue and patch
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/star-developers/2012-October/index.html" >
+   <LINK REL="made" HREF="mailto:star-developers%40lists.berlios.de?Subject=Re%3A%20%5BStar-developers%5D%20star%20-force-hole%20-sparse%20issue%20and%20patch&In-Reply-To=%3Cb321eb7896fae09770b2b2e9688d626d.squirrel%40ssl-webmail-vh.clara.net%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   
+   <LINK REL="Next"  HREF="000022.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Star-developers] star -force-hole -sparse issue and patch</H1>
+    <B>Mark</B> 
+    <A HREF="mailto:star-developers%40lists.berlios.de?Subject=Re%3A%20%5BStar-developers%5D%20star%20-force-hole%20-sparse%20issue%20and%20patch&In-Reply-To=%3Cb321eb7896fae09770b2b2e9688d626d.squirrel%40ssl-webmail-vh.clara.net%3E"
+       TITLE="[Star-developers] star -force-hole -sparse issue and patch">markk at clara.co.uk
+       </A><BR>
+    <I>Fri Oct  5 18:51:02 CEST 2012</I>
+    <P><UL>
+        
+        <LI>Next message: <A HREF="000022.html">[Star-developers] [PATCH] Segfault due to non-(re)-initialized value
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#21">[ date ]</a>
+              <a href="thread.html#21">[ thread ]</a>
+              <a href="subject.html#21">[ subject ]</a>
+              <a href="author.html#21">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Hi,
+
+In March 2011 I posted a patch to star-developers to implement the
+-force-hole option for archive creation; see
+  <A HREF="../2011-March/000005.html">http://lists.berlios.de/pipermail/star-developers/2011-March/000005.html</A>
+
+That patch causes star to scan all files, not just sparse files, for
+all-zero regions, and store all files as sparse in the archive. The
+advantage of that is, non-sparse files with all-zero regions &quot;waste&quot; less
+space in the archive, and extracting those files (as sparse files) is
+faster. Those changes were incorporated into recent star versions
+available from
+  <A HREF="ftp://ftp.berlios.de/pub/schily/">ftp://ftp.berlios.de/pub/schily/</A>
+
+
+It turns out there some minor issues with the patch I posted:
+
+1. When -force-hole -sparse is specified, *all* non-sparse files are
+stored as sparse. Even when the file has no all-zero regions, a sparse
+header is written to the archive. So the archive size is increased by 512
+bytes unnecessarily. If archiving thousands of files with no all-zero
+regions (e.g. text files, JPEG images, compressed files etc.), that can
+increase the archive size significantly.
+
+There might also be interchange issues, where some older tar
+implementations are unable to extract any files from the archive. (Though
+if the user specified -force-hole they should be aware of that possibility
+anyway.)
+
+2. If a file has exactly one 512-byte all-zero region, star may as well
+store it as non-sparse, because the added sparse header cancels out the
+512 bytes saved from storing as sparse.
+
+3. star is a bit too noisy, printing &quot;Treating [filename] as sparse&quot; for
+every non-sparse file. Since the user specified -force-hole they probably
+know that already. :)
+
+
+So I have developed an alternative patch, attached to this message, which
+has these changes:
+
+1. Only store non-sparse files as sparse if (size of all-zero regions) &gt;
+512 bytes
+2. Only print &quot;Treating [filename] as sparse&quot; for files which have more
+than 512 bytes all-zero region.
+
+You should be able to apply the patch to star as in
+   <A HREF="ftp://ftp.berlios.de/pub/schily/schily-2012-06-10.tar.bz2">ftp://ftp.berlios.de/pub/schily/schily-2012-06-10.tar.bz2</A>
+
+I haven't tested the patch much yet.
+
+
+Regards,
+-- Mark
+
+-------------- next part --------------
+An embedded and charset-unspecified text was scrubbed...
+Name: force-hole_fix_diff.txt
+URL: &lt;<A HREF="https://lists.berlios.de/pipermail/star-developers/attachments/20121005/c382c389/attachment.txt">https://lists.berlios.de/pipermail/star-developers/attachments/20121005/c382c389/attachment.txt</A>&gt;
+</PRE>
+
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	
+	<LI>Next message: <A HREF="000022.html">[Star-developers] [PATCH] Segfault due to non-(re)-initialized value
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#21">[ date ]</a>
+              <a href="thread.html#21">[ thread ]</a>
+              <a href="subject.html#21">[ subject ]</a>
+              <a href="author.html#21">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/star-developers">More information about the Star-developers
+mailing list</a><br>
+</body></html>

@@ -1,0 +1,100 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Star-developers] Patch to improve star sparse file support
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/star-developers/2011-March/index.html" >
+   <LINK REL="made" HREF="mailto:star-developers%40lists.berlios.de?Subject=Re%3A%20%5BStar-developers%5D%20Patch%20to%20improve%20star%20sparse%20file%20support&In-Reply-To=%3C4d8b6cff.QqDiLhe%2BZIwQSuND%25Joerg.Schilling%40fokus.fraunhofer.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000005.html">
+   <LINK REL="Next"  HREF="000012.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Star-developers] Patch to improve star sparse file support</H1>
+    <B>Joerg Schilling</B> 
+    <A HREF="mailto:star-developers%40lists.berlios.de?Subject=Re%3A%20%5BStar-developers%5D%20Patch%20to%20improve%20star%20sparse%20file%20support&In-Reply-To=%3C4d8b6cff.QqDiLhe%2BZIwQSuND%25Joerg.Schilling%40fokus.fraunhofer.de%3E"
+       TITLE="[Star-developers] Patch to improve star sparse file support">Joerg.Schilling at fokus.fraunhofer.de
+       </A><BR>
+    <I>Thu Mar 24 17:10:39 CET 2011</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000005.html">[Star-developers] Patch to improve star sparse file support
+</A></li>
+        <LI>Next message: <A HREF="000012.html">[Star-developers] Patch to improve star sparse file support
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#11">[ date ]</a>
+              <a href="thread.html#11">[ thread ]</a>
+              <a href="subject.html#11">[ subject ]</a>
+              <a href="author.html#11">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE><A HREF="https://lists.berlios.de/mailman/listinfo/star-developers">markk at clara.co.uk</A> wrote:
+
+&gt;<i> Attached is a patch for star which implements two changes:
+</I>&gt;<i>
+</I>&gt;<i> 1. Allow -force-hole to apply to archive creation as well. This causes all
+</I>&gt;<i> files (not just sparse files) to be scanned for holes when -sparse is
+</I>&gt;<i> used. Thus the tar archive size is reduced.
+</I>
+I am sorry for the delay, but we are moving inside offices (so I had no 
+mailaccess  and/or time for a while) and I still have to do some checks here,
+in special related to platforms that support SEEK_HOLE/SEEK_DATA.
+
+&gt;<i> 2. An optimisation for all-hole sparse files, i.e. those which consist of
+</I>&gt;<i> a single hole and no written data. In that case the file occupies no
+</I>&gt;<i> blocks on disk; detect that and avoid reading through the whole file
+</I>&gt;<i> scanning for holes. For very large files that scanning can waste a lot of
+</I>&gt;<i> CPU time.
+</I>&gt;<i>
+</I>&gt;<i> Bernd Schubert submitted a similar patch for GNU tar to the bug-tar
+</I>&gt;<i> mailing list in August 2010, so this should be useful to some people. See
+</I>&gt;<i>     <A HREF="http://lists.gnu.org/archive/html/bug-tar/2010-08/msg00038.html">http://lists.gnu.org/archive/html/bug-tar/2010-08/msg00038.html</A>
+</I>&gt;<i> In that posting he describes his use case:
+</I>&gt;<i> &quot;for improved stat() performance the Lustre filesystem uses entirely empty
+</I>&gt;<i> sparse files on its metadata target (MDT). Now with hundredes of millions
+</I>&gt;<i> of sparse file of huge sizes, creating a backup of of the MDT using
+</I>&gt;<i> vanilla gnu-tar is basically impossible, as it needs far too much time to
+</I>&gt;<i> detect sparse files.&quot;
+</I>
+OK, I did not see any filesystem so far (except ZFS) that did not at least 
+allocate 8 kB. Well, ZFS supports SEEK_HOLE/SEEK_DATA, so there is no need for
+other optimization with ZFS.
+
+J&#246;rg
+
+-- 
+ EMail:<A HREF="https://lists.berlios.de/mailman/listinfo/star-developers">joerg at schily.isdn.cs.tu-berlin.de</A> (home) J&#246;rg Schilling D-13353 Berlin
+       <A HREF="https://lists.berlios.de/mailman/listinfo/star-developers">js at cs.tu-berlin.de</A>                (uni)  
+       <A HREF="https://lists.berlios.de/mailman/listinfo/star-developers">joerg.schilling at fokus.fraunhofer.de</A> (work) Blog: <A HREF="http://schily.blogspot.com/">http://schily.blogspot.com/</A>
+ URL:  <A HREF="http://cdrecord.berlios.de/private/">http://cdrecord.berlios.de/private/</A> <A HREF="ftp://ftp.berlios.de/pub/schily">ftp://ftp.berlios.de/pub/schily</A>
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000005.html">[Star-developers] Patch to improve star sparse file support
+</A></li>
+	<LI>Next message: <A HREF="000012.html">[Star-developers] Patch to improve star sparse file support
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#11">[ date ]</a>
+              <a href="thread.html#11">[ thread ]</a>
+              <a href="subject.html#11">[ subject ]</a>
+              <a href="author.html#11">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/star-developers">More information about the Star-developers
+mailing list</a><br>
+</body></html>

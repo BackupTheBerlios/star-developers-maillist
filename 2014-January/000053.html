@@ -1,0 +1,101 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Star-developers] star -force-hole issues
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/star-developers/2014-January/index.html" >
+   <LINK REL="made" HREF="mailto:star-developers%40lists.berlios.de?Subject=Re%3A%20%5BStar-developers%5D%20star%20-force-hole%20issues&In-Reply-To=%3Cd17ea8592add9e6154cb870ecab7f758.squirrel%40ssl-webmail-vh.clara.net%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   
+   <LINK REL="Next"  HREF="000054.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Star-developers] star -force-hole issues</H1>
+    <B>Mark</B> 
+    <A HREF="mailto:star-developers%40lists.berlios.de?Subject=Re%3A%20%5BStar-developers%5D%20star%20-force-hole%20issues&In-Reply-To=%3Cd17ea8592add9e6154cb870ecab7f758.squirrel%40ssl-webmail-vh.clara.net%3E"
+       TITLE="[Star-developers] star -force-hole issues">markk at clara.co.uk
+       </A><BR>
+    <I>Sun Jan  5 20:48:46 CET 2014</I>
+    <P><UL>
+        
+        <LI>Next message: <A HREF="000054.html">[Star-developers] star -force-hole issues
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#53">[ date ]</a>
+              <a href="thread.html#53">[ thread ]</a>
+              <a href="subject.html#53">[ subject ]</a>
+              <a href="author.html#53">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Hi,
+
+In October 2012 I posted a patch to improve the behaviour of star when
+creating archives using the -force-hole option. See
+  <A HREF="https://lists.berlios.de/pipermail/star-developers/2012-October/000021.html">https://lists.berlios.de/pipermail/star-developers/2012-October/000021.html</A>
+
+The patch fixed two main issues (and a minor one which I won't bother
+mentioning again):
+ - All files were stored as sparse, meaning an unnecessary sparse header
+for every non-sparse file.
+ - star printed &quot;Treating [filename] as sparse&quot; for every non-sparse file.
+
+There was no reply to my posting but it would be great if that patch or an
+equivalent could be applied for the next star release. I can post a patch
+based on the 2014-01-04 version of star if needed, though the original
+patch will probably apply cleanly to the current source.
+
+Here's an example of how -force-hole as currently implemented can increase
+archive size.
+
+$ for a in [abcde] ; do dd if=/dev/urandom of=$a bs=513 count=1 ; done
+[output omitted]
+
+$ star -sparse -c -force-hole f=test1.tar a b c d e
+Treating 'a' as sparse
+Treating 'b' as sparse
+Treating 'c' as sparse
+Treating 'd' as sparse
+Treating 'e' as sparse
+star: 2 blocks + 0 bytes (total of 20480 bytes = 20.00k).
+
+$ star -sparse -c -f=test2.tar a b c d e
+star: 1 blocks + 0 bytes (total of 10240 bytes = 10.00k).
+
+$ ls -l *.tar
+-rw-rw-r-- 1 mark mark 20480 2014-01-05 19:26 test1.tar
+-rw-rw-r-- 1 mark mark 10240 2014-01-05 19:26 test2.tar
+
+
+-- Mark
+
+
+</PRE>
+
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	
+	<LI>Next message: <A HREF="000054.html">[Star-developers] star -force-hole issues
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#53">[ date ]</a>
+              <a href="thread.html#53">[ thread ]</a>
+              <a href="subject.html#53">[ subject ]</a>
+              <a href="author.html#53">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/star-developers">More information about the Star-developers
+mailing list</a><br>
+</body></html>

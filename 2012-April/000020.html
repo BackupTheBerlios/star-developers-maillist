@@ -1,0 +1,100 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Star-developers] star -force-hole -sparse issue
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/star-developers/2012-April/index.html" >
+   <LINK REL="made" HREF="mailto:star-developers%40lists.berlios.de?Subject=Re%3A%20%5BStar-developers%5D%20star%20-force-hole%20-sparse%20issue&In-Reply-To=%3Cb8af46312e9faad8ad2a6334deb3a3b3.squirrel%40ssl-webmail-vh.clara.net%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000019.html">
+   
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Star-developers] star -force-hole -sparse issue</H1>
+    <B>Mark</B> 
+    <A HREF="mailto:star-developers%40lists.berlios.de?Subject=Re%3A%20%5BStar-developers%5D%20star%20-force-hole%20-sparse%20issue&In-Reply-To=%3Cb8af46312e9faad8ad2a6334deb3a3b3.squirrel%40ssl-webmail-vh.clara.net%3E"
+       TITLE="[Star-developers] star -force-hole -sparse issue">markk at clara.co.uk
+       </A><BR>
+    <I>Tue Apr  3 16:54:05 CEST 2012</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000019.html">[Star-developers] star -force-hole -sparse issue
+</A></li>
+        
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#20">[ date ]</a>
+              <a href="thread.html#20">[ thread ]</a>
+              <a href="subject.html#20">[ subject ]</a>
+              <a href="author.html#20">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Hi,
+
+Replying to my own post...
+
+On Mon, April 2, 2012 20:34, Mark wrote:
+&gt;<i> Would a good-enough fix be to add a separate statement if (nsparse == 1) {
+</I>&gt;<i> ... } with similar code to the (nsparse == 0) case, except a different
+</I>&gt;<i> message?
+</I>
+Just using if (nsparse ==1) doesn't work, since that also applies for
+files with one hole.
+
+The change below seems to work correctly. However, it might be a good idea
+to also remove the &quot;Treating 'filename' as sparse&quot; output in create.c.
+With the change below, for each file with no all-zero regions, star
+reports
+  Treating 'filename' as sparse
+  'filename' has no all-zero regions
+
+I think the first line is unnecessary now.
+
+
+$ diff hole.c_orig hole.c
+70a71
+&gt;<i> extern	BOOL	silent;
+</I>1161a1163,1174
+&gt;<i>
+</I>&gt;<i> 	/* Handle the case where the file is not sparse, i.e. there is only
+</I>&gt;<i> 	   one non-hole region.*/
+</I>&gt;<i> 	if ((nsparse == 1) &amp;&amp; (info-&gt;f_rsize == info-&gt;f_size)) {
+</I>&gt;<i> 		put_tcb(info-&gt;f_tcb, info);
+</I>&gt;<i> 		if (!silent)
+</I>&gt;<i> 			error(&quot;'%s' has no all-zero regions\n&quot;, info-&gt;f_name);
+</I>&gt;<i> 		vprint(info);
+</I>&gt;<i> 		put_file(fp, info);
+</I>&gt;<i> 		return;
+</I>&gt;<i> 	}
+</I>&gt;<i>
+</I>
+-- Mark
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000019.html">[Star-developers] star -force-hole -sparse issue
+</A></li>
+	
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#20">[ date ]</a>
+              <a href="thread.html#20">[ thread ]</a>
+              <a href="subject.html#20">[ subject ]</a>
+              <a href="author.html#20">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/star-developers">More information about the Star-developers
+mailing list</a><br>
+</body></html>

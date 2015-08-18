@@ -1,0 +1,128 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Star-developers] Patch to add lzip support to star
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/star-developers/2011-April/index.html" >
+   <LINK REL="made" HREF="mailto:star-developers%40lists.berlios.de?Subject=Re%3A%20%5BStar-developers%5D%20Patch%20to%20add%20lzip%20support%20to%20star&In-Reply-To=%3Ca716492d9950d3e9841ad2124d28b736.squirrel%40ssl-webmail-vh.clara.net%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000016.html">
+   <LINK REL="Next"  HREF="000018.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Star-developers] Patch to add lzip support to star</H1>
+    <B>markk at clara.co.uk</B> 
+    <A HREF="mailto:star-developers%40lists.berlios.de?Subject=Re%3A%20%5BStar-developers%5D%20Patch%20to%20add%20lzip%20support%20to%20star&In-Reply-To=%3Ca716492d9950d3e9841ad2124d28b736.squirrel%40ssl-webmail-vh.clara.net%3E"
+       TITLE="[Star-developers] Patch to add lzip support to star">markk at clara.co.uk
+       </A><BR>
+    <I>Wed Apr 13 18:45:00 CEST 2011</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000016.html">[Star-developers] Patch to add lzip support to star
+</A></li>
+        <LI>Next message: <A HREF="000018.html">[Star-developers] Patch to add lzip support to star
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#17">[ date ]</a>
+              <a href="thread.html#17">[ thread ]</a>
+              <a href="subject.html#17">[ subject ]</a>
+              <a href="author.html#17">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Hi,
+
+Joerg Schilling wrote:
+&gt;<i> Please check the preliminary source I just put out at:
+</I>&gt;<i> <A HREF="ftp://ftp.berlios.de/pub/schily/">ftp://ftp.berlios.de/pub/schily/</A>
+</I>&gt;<i> your patch contained a typo.
+</I>
+I didn't notice that comparing my patch file with the new star source.
+Care to enlighten me as to where the typo was? :)
+
+
+&gt;<i> Did you make tests with this compression program?
+</I>&gt;<i>
+</I>&gt;<i> My impression was that it spends aprox. twice as much CPU time than xz for
+</I>&gt;<i> the same compression task, OK xz needs twice as much RAM than lzip.
+</I>
+Yes, I posted about that to the lzip-bug mailing list a while ago, see
+<A HREF="http://www.mail-archive.com/lzip-bug@nongnu.org/msg00273.html">http://www.mail-archive.com/lzip-bug@nongnu.org/msg00273.html</A>
+
+For me, lzip took about 2.5 times longer than xz to compress one test
+file. And while I can comfortably use xz with a dictionary size of 256MB
+on my system, lzip aborted with an out-of-memory error when I attempted to
+use that size. I'm not sure why there is such a large performance
+difference. Maybe lzip is based on an older version of the LZMA SDK???
+
+One apparent advantage of the lzip format compared to xz is for use in
+embedded systems; the lzip file format is simpler than xz so decompression
+code can be smaller.
+
+But based on my testing, I'm currently using xz in preference to lzip on
+my PC.
+
+
+&gt;<i> The decompression time seems to be comparable and lzip again needs only
+</I>&gt;<i> half the RAM xz like to have, so this may be an argument.
+</I>
+That difference may have been due to different default dictionary sizes
+used by lzip vs xz. Try comparing the memory usage when both are using the
+same dictionary size.
+
+
+&gt;<i> The licensce of lzip is a problem as it is unclear whether the code
+</I>&gt;<i> may be used as a built in library for arbitrary projects.
+</I>
+The lzlib (and lzip) license is the GNU GPL v3.
+
+However, pdlzip can compress and decompress lzip format and is public domain:
+  <A HREF="http://lzip.nongnu.org/pdlzip.html">http://lzip.nongnu.org/pdlzip.html</A>
+Also easylzma is public domain:
+  <A HREF="http://lloyd.github.com/easylzma/">http://lloyd.github.com/easylzma/</A>
+
+
+&gt;<i> The interesting thing seems to be that both xz and lzip claim to be a
+</I>&gt;<i> descendent frm LZMA. Do you have more information on this?
+</I>
+The original LZMA SDK is public domain, so developers can modify it or
+incorporate code from it into their projects regardless of the license
+they use for their software.
+
+XZ Utils is mostly public domain, while lzip and lzlib are distributed
+under the GNU GPL version 3. As mentioned above there are public domain
+libraries which can be used to implement lzip support.
+
+
+-- Mark
+
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000016.html">[Star-developers] Patch to add lzip support to star
+</A></li>
+	<LI>Next message: <A HREF="000018.html">[Star-developers] Patch to add lzip support to star
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#17">[ date ]</a>
+              <a href="thread.html#17">[ thread ]</a>
+              <a href="subject.html#17">[ subject ]</a>
+              <a href="author.html#17">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/star-developers">More information about the Star-developers
+mailing list</a><br>
+</body></html>

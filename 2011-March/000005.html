@@ -1,0 +1,121 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Star-developers] Patch to improve star sparse file support
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/star-developers/2011-March/index.html" >
+   <LINK REL="made" HREF="mailto:star-developers%40lists.berlios.de?Subject=Re%3A%20%5BStar-developers%5D%20Patch%20to%20improve%20star%20sparse%20file%20support&In-Reply-To=%3C9dbc47890725471804253ca7d0ab1bb0.squirrel%40ssl-webmail-vh.clara.net%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   
+   <LINK REL="Next"  HREF="000011.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Star-developers] Patch to improve star sparse file support</H1>
+    <B>markk at clara.co.uk</B> 
+    <A HREF="mailto:star-developers%40lists.berlios.de?Subject=Re%3A%20%5BStar-developers%5D%20Patch%20to%20improve%20star%20sparse%20file%20support&In-Reply-To=%3C9dbc47890725471804253ca7d0ab1bb0.squirrel%40ssl-webmail-vh.clara.net%3E"
+       TITLE="[Star-developers] Patch to improve star sparse file support">markk at clara.co.uk
+       </A><BR>
+    <I>Wed Mar 16 21:31:08 CET 2011</I>
+    <P><UL>
+        
+        <LI>Next message: <A HREF="000011.html">[Star-developers] Patch to improve star sparse file support
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#5">[ date ]</a>
+              <a href="thread.html#5">[ thread ]</a>
+              <a href="subject.html#5">[ subject ]</a>
+              <a href="author.html#5">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Hi,
+
+Attached is a patch for star which implements two changes:
+
+1. Allow -force-hole to apply to archive creation as well. This causes all
+files (not just sparse files) to be scanned for holes when -sparse is
+used. Thus the tar archive size is reduced.
+
+2. An optimisation for all-hole sparse files, i.e. those which consist of
+a single hole and no written data. In that case the file occupies no
+blocks on disk; detect that and avoid reading through the whole file
+scanning for holes. For very large files that scanning can waste a lot of
+CPU time.
+
+Bernd Schubert submitted a similar patch for GNU tar to the bug-tar
+mailing list in August 2010, so this should be useful to some people. See
+    <A HREF="http://lists.gnu.org/archive/html/bug-tar/2010-08/msg00038.html">http://lists.gnu.org/archive/html/bug-tar/2010-08/msg00038.html</A>
+In that posting he describes his use case:
+&quot;for improved stat() performance the Lustre filesystem uses entirely empty
+sparse files on its metadata target (MDT). Now with hundredes of millions
+of sparse file of huge sizes, creating a backup of of the MDT using
+vanilla gnu-tar is basically impossible, as it needs far too much time to
+detect sparse files.&quot;
+
+A quick example of the second feature:
+$ du --apparent-size --block-size=1 hugefile.bin
+9183347733	hugefile.bin
+$ du --block-size=1 hugefile.bin
+0	hugefile.bin
+$ time star -no-fifo -v -v -c -sparse artype=xustar f=old.tar hugefile.bin
+hugefile.bin is sparse
+a 9183347733 Srw-r--r--   1 root/root Mar 16 19:04 2011 hugefile.bin
+star: 1 blocks + 0 bytes (total of 10240 bytes = 10.00k).
+
+real	0m11.047s
+user	0m1.500s
+sys	0m9.525s
+$ time star_new -no-fifo -v -v -c -sparse artype=xustar f=new.tar
+hugefile.bin
+hugefile.bin is sparse
+a 9183347733 Srw-r--r--   1 root/root Mar 16 19:04 2011 hugefile.bin
+star_new: 1 blocks + 0 bytes (total of 10240 bytes = 10.00k).
+
+real	0m0.002s
+user	0m0.000s
+sys	0m0.000s
+$ md5sum new.tar old.tar
+c5100abf5e508b08b9bdf1b1f52acedd  new.tar
+c5100abf5e508b08b9bdf1b1f52acedd  old.tar
+
+I have very minimally tested this, so there may well be bugs or a better
+way to implement these features.
+
+
+Mark
+
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: sparse_patch.txt.gz
+Type: application/x-gzip
+Size: 1223 bytes
+Desc: not available
+URL: &lt;<A HREF="https://lists.berlios.de/pipermail/star-developers/attachments/20110316/38de2bda/attachment.bin">https://lists.berlios.de/pipermail/star-developers/attachments/20110316/38de2bda/attachment.bin</A>&gt;
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	
+	<LI>Next message: <A HREF="000011.html">[Star-developers] Patch to improve star sparse file support
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#5">[ date ]</a>
+              <a href="thread.html#5">[ thread ]</a>
+              <a href="subject.html#5">[ subject ]</a>
+              <a href="author.html#5">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/star-developers">More information about the Star-developers
+mailing list</a><br>
+</body></html>

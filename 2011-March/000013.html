@@ -1,0 +1,90 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Star-developers] Patch to improve star sparse file support
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/star-developers/2011-March/index.html" >
+   <LINK REL="made" HREF="mailto:star-developers%40lists.berlios.de?Subject=Re%3A%20%5BStar-developers%5D%20Patch%20to%20improve%20star%20sparse%20file%20support&In-Reply-To=%3C4d909eee.R5%2B/5KCkcqZggAbO%25Joerg.Schilling%40fokus.fraunhofer.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000012.html">
+   <LINK REL="Next"  HREF="000006.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Star-developers] Patch to improve star sparse file support</H1>
+    <B>Joerg Schilling</B> 
+    <A HREF="mailto:star-developers%40lists.berlios.de?Subject=Re%3A%20%5BStar-developers%5D%20Patch%20to%20improve%20star%20sparse%20file%20support&In-Reply-To=%3C4d909eee.R5%2B/5KCkcqZggAbO%25Joerg.Schilling%40fokus.fraunhofer.de%3E"
+       TITLE="[Star-developers] Patch to improve star sparse file support">Joerg.Schilling at fokus.fraunhofer.de
+       </A><BR>
+    <I>Mon Mar 28 16:45:02 CEST 2011</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000012.html">[Star-developers] Patch to improve star sparse file support
+</A></li>
+        <LI>Next message: <A HREF="000006.html">[Star-developers] Patch to add xz support to star 1.5.1
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#13">[ date ]</a>
+              <a href="thread.html#13">[ thread ]</a>
+              <a href="subject.html#13">[ subject ]</a>
+              <a href="author.html#13">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE><A HREF="https://lists.berlios.de/mailman/listinfo/star-developers">markk at clara.co.uk</A> wrote:
+
+&gt;<i> $ dd if=/dev/zero of=sparse.bin bs=1 seek=1234567890 count=0
+</I>&gt;<i> ...
+</I>&gt;<i> $ du sparse.bin
+</I>&gt;<i> 0	sparse.bin
+</I>&gt;<i>
+</I>&gt;<i> That invocation of dd may behave differently under a different OS;
+</I>&gt;<i> &quot;fixing&quot; the file length with a zero-length write -- or perhaps via dd
+</I>&gt;<i> calling ftruncate()? -- isn't as far as I know required by POSIX. An
+</I>&gt;<i> alternative which should be more portable is to create a file with a large
+</I>&gt;<i> hole and write some data at the end, then truncate it. Something like
+</I>
+Traditional dd behaves different, but the current POSIX standard seems to 
+permit the deviating behavior from gdd.
+
+If you are on UFS, you cannot initially create a file that contains a hole but 
+nop data. On UFS, you need to write a longer file and then truncate it to it's 
+final size. This is what star does and this is why star is expected to 
+correctly wotk on all filesystems. AFAIR, GNU tar is not able to create a &quot;only 
+hole&quot; file on UFS.
+
+J&#246;rg
+
+-- 
+ EMail:<A HREF="https://lists.berlios.de/mailman/listinfo/star-developers">joerg at schily.isdn.cs.tu-berlin.de</A> (home) J&#246;rg Schilling D-13353 Berlin
+       <A HREF="https://lists.berlios.de/mailman/listinfo/star-developers">js at cs.tu-berlin.de</A>                (uni)  
+       <A HREF="https://lists.berlios.de/mailman/listinfo/star-developers">joerg.schilling at fokus.fraunhofer.de</A> (work) Blog: <A HREF="http://schily.blogspot.com/">http://schily.blogspot.com/</A>
+ URL:  <A HREF="http://cdrecord.berlios.de/private/">http://cdrecord.berlios.de/private/</A> <A HREF="ftp://ftp.berlios.de/pub/schily">ftp://ftp.berlios.de/pub/schily</A>
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000012.html">[Star-developers] Patch to improve star sparse file support
+</A></li>
+	<LI>Next message: <A HREF="000006.html">[Star-developers] Patch to add xz support to star 1.5.1
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#13">[ date ]</a>
+              <a href="thread.html#13">[ thread ]</a>
+              <a href="subject.html#13">[ subject ]</a>
+              <a href="author.html#13">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/star-developers">More information about the Star-developers
+mailing list</a><br>
+</body></html>

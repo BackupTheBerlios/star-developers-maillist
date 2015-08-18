@@ -1,0 +1,105 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Star-developers] star -force-hole -sparse issue
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/star-developers/2012-April/index.html" >
+   <LINK REL="made" HREF="mailto:star-developers%40lists.berlios.de?Subject=Re%3A%20%5BStar-developers%5D%20star%20-force-hole%20-sparse%20issue&In-Reply-To=%3C373bf362932d0725d8bb1420a928a060.squirrel%40ssl-webmail-vh.clara.net%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   
+   <LINK REL="Next"  HREF="000020.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Star-developers] star -force-hole -sparse issue</H1>
+    <B>Mark</B> 
+    <A HREF="mailto:star-developers%40lists.berlios.de?Subject=Re%3A%20%5BStar-developers%5D%20star%20-force-hole%20-sparse%20issue&In-Reply-To=%3C373bf362932d0725d8bb1420a928a060.squirrel%40ssl-webmail-vh.clara.net%3E"
+       TITLE="[Star-developers] star -force-hole -sparse issue">markk at clara.co.uk
+       </A><BR>
+    <I>Mon Apr  2 21:34:58 CEST 2012</I>
+    <P><UL>
+        
+        <LI>Next message: <A HREF="000020.html">[Star-developers] star -force-hole -sparse issue
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#19">[ date ]</a>
+              <a href="thread.html#19">[ thread ]</a>
+              <a href="subject.html#19">[ subject ]</a>
+              <a href="author.html#19">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Hi,
+
+In March 2011 I posted a patch to allow -force-hole to treat all files as
+sparse, when both -force-hole and -sparse options are used for archive
+creation. That was incorporated into recent star releases.
+
+When archiving files which contain large-enough all-zero regions, using
+-force-hole -sparse results in the archive file being smaller. That can be
+a huge disk space win for certain types of file, e.g. some CD/DVD ISO
+images.
+
+However, I noticed a small problem. Even for files which have no
+large-enough all-zero regions (text files, compressed files, JPEG images
+etc.), a &quot;dummy&quot; sparse header is written to the archive, wasting 512
+bytes for each file.
+
+For an archive of thousands of files, the final archive could be
+significantly larger than necessary due to all those sparse headers. Also,
+for better interchangeability it would be good to only write sparse
+headers when necessary.
+
+Is there an easy way to fix that? put_sparse() in hole.c has this:
+	nsparse = mk_sp_list(fp, info, &amp;sparse);
+	if (debug)
+		error(&quot;numsparse: %d\n&quot;, nsparse);
+	if (nsparse == 0) {
+		info-&gt;f_rsize = info-&gt;f_size;
+		put_tcb(info-&gt;f_tcb, info);
+		vprint(info);
+		errmsgno(EX_BAD, &quot;Dumping SPARSE '%s' as file\n&quot;, info-&gt;f_name);
+		put_file(fp, info);
+		return;
+	}
+        ...
+
+mk_sp_list() only returns 0 if there is an error. So the case where there
+are no holes is not handled by put_sparse().
+
+Would a good-enough fix be to add a separate statement if (nsparse == 1) {
+... } with similar code to the (nsparse == 0) case, except a different
+message?
+
+
+-- Mark
+
+
+</PRE>
+
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	
+	<LI>Next message: <A HREF="000020.html">[Star-developers] star -force-hole -sparse issue
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#19">[ date ]</a>
+              <a href="thread.html#19">[ thread ]</a>
+              <a href="subject.html#19">[ subject ]</a>
+              <a href="author.html#19">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/star-developers">More information about the Star-developers
+mailing list</a><br>
+</body></html>

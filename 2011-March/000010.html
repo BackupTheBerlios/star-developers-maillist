@@ -1,0 +1,88 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Star-developers] Patch to add lzip support to star
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/star-developers/2011-March/index.html" >
+   <LINK REL="made" HREF="mailto:star-developers%40lists.berlios.de?Subject=Re%3A%20%5BStar-developers%5D%20Patch%20to%20add%20lzip%20support%20to%20star&In-Reply-To=%3Cfbcd36a5051b12696aa84ee943a75707.squirrel%40ssl-webmail-vh.clara.net%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000009.html">
+   
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Star-developers] Patch to add lzip support to star</H1>
+    <B>markk at clara.co.uk</B> 
+    <A HREF="mailto:star-developers%40lists.berlios.de?Subject=Re%3A%20%5BStar-developers%5D%20Patch%20to%20add%20lzip%20support%20to%20star&In-Reply-To=%3Cfbcd36a5051b12696aa84ee943a75707.squirrel%40ssl-webmail-vh.clara.net%3E"
+       TITLE="[Star-developers] Patch to add lzip support to star">markk at clara.co.uk
+       </A><BR>
+    <I>Mon Mar 21 19:47:24 CET 2011</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000009.html">[Star-developers] Patch to add xz support to star 1.5.1
+</A></li>
+        
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#10">[ date ]</a>
+              <a href="thread.html#10">[ thread ]</a>
+              <a href="subject.html#10">[ subject ]</a>
+              <a href="author.html#10">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Hi,
+
+Joerg Schilling wrote:
+&gt;<i> Star currently only detects the defailt format from xz.
+</I>&gt;<i>
+</I>&gt;<i> If you have something for other formats, please send code.
+</I>
+Attached to this message is a patch which adds support for lzip to star.
+Apply the patch to the star source from
+<A HREF="ftp://ftp.berlios.de/pub/schily/schily-2011-01-02.tar.bz2">ftp://ftp.berlios.de/pub/schily/schily-2011-01-02.tar.bz2</A>
+
+Star can detect lzip-compressed files and automatically decompress them.
+The patch adds a new option -lzip, which works similarly to the existing
+-bz, -xz etc. options.
+
+Lzip is another file format which uses LZMA compression, in some ways a
+&quot;competitor&quot; of xz. See <A HREF="http://lzip.nongnu.org/lzip.html">http://lzip.nongnu.org/lzip.html</A>
+
+Some lzip-compressed tar files can be downloaded from
+<A HREF="http://download.savannah.gnu.org/releases/lzip/">http://download.savannah.gnu.org/releases/lzip/</A>
+
+
+Mark
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: schily-2011-01-02_star_lzip_patch.txt.gz
+Type: application/x-gzip
+Size: 2536 bytes
+Desc: not available
+URL: &lt;<A HREF="https://lists.berlios.de/pipermail/star-developers/attachments/20110321/d86d7751/attachment.bin">https://lists.berlios.de/pipermail/star-developers/attachments/20110321/d86d7751/attachment.bin</A>&gt;
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000009.html">[Star-developers] Patch to add xz support to star 1.5.1
+</A></li>
+	
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#10">[ date ]</a>
+              <a href="thread.html#10">[ thread ]</a>
+              <a href="subject.html#10">[ subject ]</a>
+              <a href="author.html#10">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/star-developers">More information about the Star-developers
+mailing list</a><br>
+</body></html>

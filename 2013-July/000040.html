@@ -1,0 +1,97 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Star-developers] Star exec()'ed from suid binary
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/star-developers/2013-July/index.html" >
+   <LINK REL="made" HREF="mailto:star-developers%40lists.berlios.de?Subject=Re%3A%20%5BStar-developers%5D%20Star%20exec%28%29%27ed%20from%20suid%20binary&In-Reply-To=%3C1814817.NidSPZ3sWW%40praiskup.usersys.redhat.com%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000039.html">
+   <LINK REL="Next"  HREF="000029.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Star-developers] Star exec()'ed from suid binary</H1>
+    <B>Pavel Raiskup</B> 
+    <A HREF="mailto:star-developers%40lists.berlios.de?Subject=Re%3A%20%5BStar-developers%5D%20Star%20exec%28%29%27ed%20from%20suid%20binary&In-Reply-To=%3C1814817.NidSPZ3sWW%40praiskup.usersys.redhat.com%3E"
+       TITLE="[Star-developers] Star exec()'ed from suid binary">praiskup at redhat.com
+       </A><BR>
+    <I>Tue Jul 23 14:44:03 CEST 2013</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000039.html">[Star-developers] Star exec()'ed from suid binary
+</A></li>
+        <LI>Next message: <A HREF="000029.html">[Star-developers] Should pax restore UID/GID by default?
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#40">[ date ]</a>
+              <a href="thread.html#40">[ thread ]</a>
+              <a href="subject.html#40">[ subject ]</a>
+              <a href="author.html#40">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>&gt;<i> Well, there is a problem with such tests. I believe that you cannot
+</I>&gt;<i> assume a specific behavior when you start a program with euid != uid.
+</I>
+Yes, I also think that it is not specified anywhere &#8212; so the problem
+probably shouldn't be significant for LSB certification.
+
+But why not to restore GID/UID from archive if your 'euid == 0' and your
+permissions are powerfull enough?
+
+&gt;<i> But there seem to be other problems:
+</I>&gt;<i>
+</I>&gt;<i> 1)  star for security reasons does not extract files with &quot;..&quot; in the
+</I>&gt;<i>     path.  cpio and tar are not part of POSIX (they just have been in
+</I>&gt;<i>     SUSv2).  It may be an interesting question to be discussed in the
+</I>&gt;<i>     OpenGroup standard board whether star's behavior is OK for pax.
+</I>
+Yes, they expect the archive should be resotored like with '-..'.
+
+&gt;<i> 2)  There are problems flagged as: when extracting
+</I>&gt;<i>     &quot;/opt/lsb/test/core/tet/test_sets/TESTROOT/tset/POSIX.os/dataform/cpio/d.cpio/CWD/F&quot;
+</I>&gt;<i>     in cpio format file name was not resolved to &quot;F&quot;
+</I>&gt;<i>
+</I>&gt;<i>   I would need to see the archive to discuss whether star behaves
+</I>&gt;<i>   correctly or not.
+</I>
+I think the test FAIL is caused by stripping the leading '/' from file
+names.  I just changed the abs_path = TRUE and it then passed, wait a
+sec..
+
+  $ pax -r /tmp/tmp.wIbHQUjBT7/cpio-type.a
+  /opt/lsb/test/core/tet/test_sets/TESTROOT/tset/POSIX.os/dataform/cpio/d.cpio/CWD/F
+
+.. is the content.  They simply expect it should be be restored like with
+'-/' option.
+
+Pavel
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000039.html">[Star-developers] Star exec()'ed from suid binary
+</A></li>
+	<LI>Next message: <A HREF="000029.html">[Star-developers] Should pax restore UID/GID by default?
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#40">[ date ]</a>
+              <a href="thread.html#40">[ thread ]</a>
+              <a href="subject.html#40">[ subject ]</a>
+              <a href="author.html#40">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/star-developers">More information about the Star-developers
+mailing list</a><br>
+</body></html>
